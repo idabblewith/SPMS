@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = []
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "common.apps.CommonConfig",
+    "projects.apps.ProjectsConfig",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
@@ -110,11 +111,11 @@ DATABASES = {
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "spmsdb",
-#         "USER": "jpdbca",
-#         "PASSWORD": "mypassword",
-#         "HOST": "db",  # Docker container name for PostgreSQL
-#         "PORT": 5432,
+#         "NAME": env("DBNAME"),
+#         "USER": env("DBUSER"),
+#         "PASSWORD": env("DBUSER_PASSWORD"),
+#         "HOST": env("DOCKER_HOST"),  # Docker container name for PostgreSQL
+#         "PORT": env("PORT"),
 #     }
 # }
 
