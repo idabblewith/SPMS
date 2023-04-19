@@ -59,9 +59,9 @@ class User(AbstractUser):
         help_text=("Has the user agreed to the Terms and Conditions?"),
     )
 
-    date_joined = models.DateTimeField(
-        auto_now_add=True,
-    )
+    # date_joined = models.DateTimeField(
+    #     auto_now_add=True,
+    # )
 
     # Name -------------------------------------------------------------------#
     title = models.CharField(
