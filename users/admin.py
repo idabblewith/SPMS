@@ -12,7 +12,6 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "username",
                     "password",
-                    "name",
                     "email",
                 ),
             },
@@ -42,8 +41,6 @@ class CustomUserAdmin(UserAdmin):
     list_display = [
         "username",
         "email",
-        # "name",
-        # "is_host",
     ]
 
     # """Custom UserAdmin."""
