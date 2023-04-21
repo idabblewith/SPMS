@@ -5,43 +5,43 @@ from .models import ScienceProject, StudentProject, ExternalProject, CoreFunctio
 @admin.register(ScienceProject)
 class ScienceProjectAdmin(admin.ModelAdmin):
     list_display = (
-        "creator_id",
+        # "creator_id",
         "title",
         "type",
         "active",
         "status",
-        "created_at",
-        "updated_at",
+        # "created_at",
+        # "updated_at",
     )
 
 
 @admin.register(StudentProject)
 class StudentProjectAdmin(admin.ModelAdmin):
     list_display = (
-        "creator_id",
-        "organisation",
+        # "creator_id",
         "level",
+        "organisation",
         "title",
         "type",
         "active",
         "status",
-        "created_at",
-        "updated_at",
+        # "created_at",
+        # "updated_at",
     )
 
 
 @admin.register(ExternalProject)
 class ExternalProjectAdmin(admin.ModelAdmin):
     list_display = (
-        "creator_id",
+        # "creator_id",
         "time_budget",
         "monetary_budget",
         "title",
         "type",
         "active",
         "status",
-        "created_at",
-        "updated_at",
+        # "created_at",
+        # "updated_at",
     )
 
 
@@ -53,6 +53,6 @@ class CoreFunctionProjectAdmin(admin.ModelAdmin):
         "type",
         "active",
         "status",
-        "created_at",
-        "updated_at",
+        # "created_at",
+        # "updated_at",
     )
