@@ -51,13 +51,15 @@ SYSTEM_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "rest_framework",
+]
 
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "common.apps.CommonConfig",
     "medias.apps.MediasConfig",
-    "business_areas.apps.BusinessAreasConfig",
+    "classifications.apps.ClassificationsConfig",
     "projects.apps.ProjectsConfig",
 ]
 
@@ -78,9 +80,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
         # "config.authentication.JWTAuthentication",
-        # "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
         # "rest_framework.authentication.TokenAuthentication",
     ],
 }

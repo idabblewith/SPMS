@@ -12,7 +12,7 @@ class Photo(CommonModel):
     file = models.URLField()
     description = models.CharField(max_length=100)
     business_area = models.ForeignKey(
-        "business_areas.BusinessArea",
+        "classifications.BusinessArea",
         on_delete=models.CASCADE,
         null=True,
         blank=True,

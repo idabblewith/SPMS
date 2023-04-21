@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BusinessAreasConfig(AppConfig):
+class ClassificationsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "business_areas"
+    name = "classifications"
