@@ -52,3 +52,10 @@ class Comment(CommonModel):
     )  # Will be sent from front-end
     is_public = models.BooleanField(default=True)
     is_removed = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.user.first_name} | {self.category}"
+
+    class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"

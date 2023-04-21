@@ -24,3 +24,7 @@ class ProjectCategory(CommonModel):
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        verbose_name = "Project Category"
+        verbose_name_plural = "Project Categories"
