@@ -11,6 +11,19 @@ class Photo(CommonModel):
 
     file = models.URLField()
     description = models.CharField(max_length=100)
+    uploader = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="photos_uploaded",
+    )
+    category = models.ForeignKey(
+        "categories.ProjectCategory",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     business_area = models.ForeignKey(
         "classifications.BusinessArea",
         on_delete=models.CASCADE,
