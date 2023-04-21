@@ -59,8 +59,10 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "common.apps.CommonConfig",
     "medias.apps.MediasConfig",
-    "classifications.apps.ClassificationsConfig",
     "projects.apps.ProjectsConfig",
+    "classifications.apps.ClassificationsConfig",
+    "categories.apps.CategoriesConfig",
+    "communication.apps.CommunicationConfig",
 ]
 
 
