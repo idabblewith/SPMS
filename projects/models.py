@@ -36,11 +36,11 @@ class BaseProject(CommonModel):
         TERMINATED = ("terminated", "Terminated and Closed")
         SUSPENDED = ("suspended", "Suspended")
 
-    class TypeChoices(models.TextChoices):
-        EXTERNAL = ("external", "External Project")
-        SCIENCE = ("science", "Science Project")
-        CORE = ("core", "Core Project")
-        STUDENT = ("student", "Student Project")
+    # class TypeChoices(models.TextChoices):
+    #     EXTERNAL = ("external", "External Project")
+    #     SCIENCE = ("science", "Science Project")
+    #     CORE = ("core", "Core Project")
+    #     STUDENT = ("student", "Student Project")
 
     title = models.CharField(max_length=200)
     tagline = models.CharField(max_length=200)
@@ -54,9 +54,11 @@ class BaseProject(CommonModel):
         max_length=300
     )  # will extract as semicolon seperated values like linkedin skills
 
-    type = models.CharField(
-        max_length=100,
-        choices=TypeChoices.choices,
+    kind = models.ForeignKey(
+        "categories.ProjectCategory",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
         help_text="The project type determines the approval and \
                     documentation requirements during the project's \
                     life span. Choose wisely - you will not be able \

@@ -8,52 +8,48 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("medias", "0001_initial"),
+        ("communication", "0001_initial"),
         ("projects", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="photo",
+            model_name="comment",
             name="core_function_project",
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="photos",
                 to="projects.corefunctionproject",
             ),
         ),
         migrations.AddField(
-            model_name="photo",
+            model_name="comment",
             name="external_project",
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="photos",
                 to="projects.externalproject",
             ),
         ),
         migrations.AddField(
-            model_name="photo",
+            model_name="comment",
             name="science_project",
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="photos",
                 to="projects.scienceproject",
             ),
         ),
         migrations.AddField(
-            model_name="photo",
+            model_name="comment",
             name="student_project",
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="photos",
                 to="projects.studentproject",
             ),
         ),

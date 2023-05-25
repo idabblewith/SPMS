@@ -33,6 +33,23 @@ from .serializers import (
     StudentProjectSerializer,
 )
 
+from users.models import User
+
+
+class DownloadAllProjects(APIView):
+    def get_user(self, req, pk):
+        try:
+            obj = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound
+        return obj
+
+    def post(self, req):
+        # user = self.get_user(pk=req.data.userID)
+        print(req.data)
+        # print(user)
+        # pass
+
 
 class CoreFunctionProjects(APIView):
     def get(self, req):

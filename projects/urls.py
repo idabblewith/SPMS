@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("download", views.DownloadAllProjects.as_view()),
     path("external", views.ExternalProjects.as_view()),
     path("external/<int:pk>", views.ExternalProjectDetail.as_view()),
     path("student", views.StudentProjects.as_view()),
