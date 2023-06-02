@@ -22,26 +22,28 @@ from django.utils import timezone
 import requests
 import time
 
-from .models import Photo
-from .serializers import PhotoSerializer
+from .models import BusinessAreaPhoto
+from .serializers import BusinessAreaPhotoSerializer
 
 
-class PhotoDetail(APIView):
+class BusinessAreaPhotoDetail(APIView):
     permission_classes = [IsAuthenticated]
 
     def go(self, pk):
         try:
-            return Photo.objects.get(pk=pk)
-        except Photo.DoesNotExist:
+            return BusinessAreaPhoto.objects.get(pk=pk)
+        except BusinessAreaPhoto.DoesNotExist:
             raise NotFound
 
     def delete(self, req, pk):
-        photo = self.go(pk)
+        business_photo = self.go(pk)
 
-        # Reject if not admin or uploader
-        # if (photo.uploader.is_admin == False and photo.uploader != req.user):
-        #     raise PermissionDenied
-        photo.delete()
+        if (
+            business_photo.uploader.is_admin == False
+            and business_photo.uploader != req.user
+        ):
+            raise PermissionDenied
+        business_photo.delete()
         return Response(
             status=HTTP_204_NO_CONTENT,
         )

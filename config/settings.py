@@ -4,72 +4,39 @@ import environ
 from datetime import timedelta
 import dj_database_url
 
-# Set up the .env file to load gitignored secrets
 env = environ.Env()
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    # Place azure hosting link for backend here
-]
-
-
-# Application definition
-
-SYSTEM_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-]
-
-THIRD_PARTY_APPS = [
-    "rest_framework",
-]
-
-CUSTOM_APPS = [
-    "users.apps.UsersConfig",
-    "common.apps.CommonConfig",
-    "medias.apps.MediasConfig",
-    "projects.apps.ProjectsConfig",
-    "classifications.apps.ClassificationsConfig",
-    "categories.apps.CategoriesConfig",
-    "communication.apps.CommunicationConfig",
-]
-
-
-INSTALLED_APPS = SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
-        # "config.authentication.JWTAuthentication",
-    ]
-}
-
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-    ],
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+    "AUTH_HEADER_TYPES": ("Bearer", "JWT"),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    "JTI_CLAIM": "jti",
+    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -104,18 +71,20 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
-LANGUAGE_CODE = "en-au"
 TIME_ZONE = "Australia/Perth"
+LANGUAGE_CODE = "en-au"
 USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-PAGE_SIZE = 10
-USER_LIST_PAGE_SIZE = 250
+WSGI_APPLICATION = "config.wsgi.application"
+
 ROOT_URLCONF = "config.urls"
 STATIC_URL = "static/"
 MEDIA_ROOT = "uploads"
 MEDIA_URL = "user-uploads/"
+
+PAGE_SIZE = 10
+USER_LIST_PAGE_SIZE = 250
 
 
 DATABASES = {
@@ -125,22 +94,73 @@ DATABASES = {
     ),
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
+AUTH_USER_MODEL = "users.User"
+
+# Application definition
+
+SYSTEM_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
+
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+]
+
+CUSTOM_APPS = [
+    "users.apps.UsersConfig",
+    "common.apps.CommonConfig",
+    "medias.apps.MediasConfig",
+    "projects.apps.ProjectsConfig",
+    "classifications.apps.ClassificationsConfig",
+    "categories.apps.CategoriesConfig",
+    "communication.apps.CommunicationConfig",
+    "reports.apps.ReportsConfig",
+    "quotes.apps.QuotesConfig",
+]
+
+
+INSTALLED_APPS = SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
+
+
+ALLOWED_HOSTS = [
+    # "127.0.0.1",
+    # "localhost",
+    # Place azure hosting link for backend here
+]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
+
+# CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "dbca_utils.middleware.SSOLoginMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        # "config.authentication.JWTAuthentication",
+    ],
+}

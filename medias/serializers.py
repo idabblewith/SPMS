@@ -1,17 +1,17 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Photo
+from .models import BusinessAreaPhoto
 from users.serializers import TinyUserSerializer
 
 
-class PhotoSerializer(ModelSerializer):
+class BusinessAreaPhotoSerializer(ModelSerializer):
     user = TinyUserSerializer(read_only=True)
 
     class Meta:
-        model = Photo
+        model = BusinessAreaPhoto
         fields = [
             "pk",
             "file",
-            "description",
-            "category",
+            "year",
+            "business_area",
             "uploader",
         ]

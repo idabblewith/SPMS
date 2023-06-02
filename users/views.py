@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from .models import User
 from rest_framework.exceptions import NotFound
-from .serializers import FullUserSerializer, TinyUserSerializer, TinyUserSerializer
+from .serializers import FullUserSerializer, TinyUserSerializer
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_200_OK,

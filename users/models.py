@@ -3,6 +3,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+# username, last_name first_name, email == REQUIRED FOR SSO
+
+
 class User(AbstractUser):
     """
     A custom user model for SDIS.

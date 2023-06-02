@@ -20,6 +20,7 @@ from django.conf import settings
 from django.utils import timezone
 
 import time
+from django.http import HttpResponse
 
 from .models import ScienceProject, StudentProject, ExternalProject, CoreFunctionProject
 from .serializers import (
@@ -34,21 +35,103 @@ from .serializers import (
 )
 
 from users.models import User
+from .models import ScienceProject, CoreFunctionProject, StudentProject, ExternalProject
+import csv
+
+# TODO: Create a Downlad All Projects As CSV version that includes all projects (without IDs)
+
+# class DownloadAllProjectsAsCSVJOINED(APIView):
+# def get(self, req):
+#     pass
 
 
-class DownloadAllProjects(APIView):
-    def get_user(self, req, pk):
+class DownloadAllProjectsAsCSV(APIView):
+    def get(self, req):
         try:
-            obj = User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            raise NotFound
-        return obj
+            # Retrieve projects data from the database
+            core_projects = CoreFunctionProject.objects.all()
 
-    def post(self, req):
-        # user = self.get_user(pk=req.data.userID)
-        print(req.data)
-        # print(user)
-        # pass
+            # Create a response object with CSV content type
+            res = HttpResponse(content_type="text/csv")
+            res["Content-Disposition"] = 'attachment; filename="projects.csv"'
+
+            # Create a CSV writer
+            writer = csv.writer(res)
+            writer.writerow(["-----", "Core Function Projects", "-----"])
+
+            # Get field names (CoreFunctionProject)
+            core_field_names = [
+                field.name for field in CoreFunctionProject._meta.fields
+            ]
+
+            # Write CSV headers (CoreFunctionProject)
+            writer.writerow(core_field_names)
+            # print(res.data)
+
+            # Write project data rows
+            for project in core_projects:
+                row = [getattr(project, field) for field in core_field_names]
+                writer.writerow(row)
+
+            # Add an empty row for separation
+            writer.writerow([])
+            writer.writerow(["-----", "Science Projects", "-----"])
+
+            science_projects = ScienceProject.objects.all()
+
+            # Get field names (ScienceProject)
+            science_field_names = [field.name for field in ScienceProject._meta.fields]
+
+            # Write CSV headers for (Science Project)
+            writer.writerow(science_field_names)
+
+            # Write project data rows
+            for project in science_projects:
+                row = [getattr(project, field) for field in science_field_names]
+                writer.writerow(row)
+
+            # Add an empty row for separation
+            writer.writerow([])
+            writer.writerow(["-----", "Student Projects", "-----"])
+
+            student_projects = StudentProject.objects.all()
+
+            # Get field names (StudentProject)
+            student_field_names = [field.name for field in StudentProject._meta.fields]
+
+            # Write CSV headers (StudentProject)
+            writer.writerow(student_field_names)
+
+            # Write project data rows
+            for project in student_projects:
+                row = [getattr(project, field) for field in student_field_names]
+                writer.writerow(row)
+
+            # Add an empty row for separation
+            writer.writerow([])
+            writer.writerow(["-----", "External Projects", "-----"])
+
+            external_projects = ExternalProject.objects.all()
+
+            # Get field names (ExternalProject)
+            external_field_names = [
+                field.name for field in ExternalProject._meta.fields
+            ]
+
+            # Write CSV headers (StudentProject)
+            writer.writerow(external_field_names)
+
+            # Write project data rows
+            for project in external_projects:
+                row = [getattr(project, field) for field in external_field_names]
+                writer.writerow(row)
+
+            return res
+
+        # If server is down or otherwise error
+        except Exception as e:
+            print(e)
+            return HttpResponse(status=500, content="Error generating CSV")
 
 
 class CoreFunctionProjects(APIView):
