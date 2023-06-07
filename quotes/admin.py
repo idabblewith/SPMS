@@ -150,6 +150,7 @@ class QuoteReportAdmin(admin.ModelAdmin):
     list_display = [
         "reporter",
         "quote",
-        "created_at",
+        "reason",
+        # "created_at",
         # "reports",
     ]

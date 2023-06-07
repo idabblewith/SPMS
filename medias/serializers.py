@@ -1,10 +1,11 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, IntegerField, CharField
 from .models import BusinessAreaPhoto
-from users.serializers import TinyUserSerializer
+
+# from users.serializers import TinyUserSerializer
 
 
 class BusinessAreaPhotoSerializer(ModelSerializer):
-    user = TinyUserSerializer(read_only=True)
+    # user = TinyUserSerializer(read_only=True)
 
     class Meta:
         model = BusinessAreaPhoto
@@ -15,3 +16,45 @@ class BusinessAreaPhotoSerializer(ModelSerializer):
             "business_area",
             "uploader",
         ]
+
+
+class PhotoSerializer(ModelSerializer):
+    class Meta:
+        fields = [
+            "pk",
+            "file",
+            "description",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        model = self.context.get("model")
+
+        if model:
+            if issubclass(model, BusinessAreaPhoto):
+                self.fields["year"] = IntegerField()
+                self.fields["business_area"] = CharField()
+                # self.fields["uploader"] = TinyUserSerializer(read_only=True)
+
+    def create(self, validated_data):
+        model = self.context.get("model")
+
+        # Handle model-specific create logic if needed
+        if model and issubclass(model, BusinessAreaPhoto):
+            year = validated_data.pop("year")
+            business_area = validated_data.pop("business_area")
+            uploader = validated_data.pop("uploader")
+
+            photo = BusinessAreaPhoto.objects.create(
+                year=year, business_area=business_area, **validated_data
+            )
+
+            # Set the uploader relationship
+            photo.uploader = uploader
+            photo.save()
+
+            return photo
+
+        # Default create logic for the generic photo model
+        return super().create(validated_data)

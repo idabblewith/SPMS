@@ -115,12 +115,13 @@ THIRD_PARTY_APPS = [
 
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
-    "common.apps.CommonConfig",
+    "entities.apps.EntitiesConfig",
+    "contacts.apps.ContactsConfig",
     "medias.apps.MediasConfig",
+    "communications.apps.CommunicationsConfig",
+    "common.apps.CommonConfig",
     "projects.apps.ProjectsConfig",
-    "classifications.apps.ClassificationsConfig",
     "categories.apps.CategoriesConfig",
-    "communication.apps.CommunicationConfig",
     "reports.apps.ReportsConfig",
     "quotes.apps.QuotesConfig",
 ]

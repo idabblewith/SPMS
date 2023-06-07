@@ -22,6 +22,13 @@ class ARARPDF(CommonModel):
         related_name="generated_pdfs",
     )
 
+    def __str__(self) -> str:
+        return f"{self.year} ARAR PDF"
+
+    class Meta:
+        verbose_name = "ARAR PDF"
+        verbose_name_plural = "ARAR PDFs"
+
 
 class CoverPage(CommonModel):
 
@@ -38,6 +45,13 @@ class CoverPage(CommonModel):
         null=True,
         related_name="front_covers_uploaded",
     )
+
+    def __str__(self) -> str:
+        return "CoverPage Photo File"
+
+    class Meta:
+        verbose_name = "Cover Page"
+        verbose_name_plural = "Cover Pages"
 
 
 class ServiceDeliveryImage(CommonModel):
@@ -56,6 +70,13 @@ class ServiceDeliveryImage(CommonModel):
         related_name="service_delivery_images_uploaded",
     )
 
+    def __str__(self) -> str:
+        return "ServiceDelivery Photo File"
+
+    class Meta:
+        verbose_name = "Service Delivery Image"
+        verbose_name_plural = "Service Delivery Images"
+
 
 class PartnershipsImage(CommonModel):
     """
@@ -72,6 +93,13 @@ class PartnershipsImage(CommonModel):
         null=True,
         related_name="partnership_images_uploaded",
     )
+
+    def __str__(self) -> str:
+        return "Partnerships Photo File"
+
+    class Meta:
+        verbose_name = "Partnership Image"
+        verbose_name_plural = "Partnership Images"
 
 
 class StudentProjectsImage(CommonModel):
@@ -90,6 +118,13 @@ class StudentProjectsImage(CommonModel):
         related_name="student_project_images_uploaded",
     )
 
+    def __str__(self) -> str:
+        return "StudentProjects Photo File"
+
+    class Meta:
+        verbose_name = "Student Projects Image"
+        verbose_name_plural = "Student Projects Images"
+
 
 class StudentReportsImage(CommonModel):
     """
@@ -106,6 +141,13 @@ class StudentReportsImage(CommonModel):
         null=True,
         related_name="student_report_images_uploaded",
     )
+
+    def __str__(self) -> str:
+        return "StudentReports Photo File"
+
+    class Meta:
+        verbose_name = "Student Reports Image"
+        verbose_name_plural = "Student Reports Images"
 
 
 class PublicationsImage(CommonModel):
@@ -124,6 +166,13 @@ class PublicationsImage(CommonModel):
         related_name="publication_images_uploaded",
     )
 
+    def __str__(self) -> str:
+        return "Publications Photo File"
+
+    class Meta:
+        verbose_name = "Publications Image"
+        verbose_name_plural = "Publications Images"
+
 
 class RearPage(CommonModel):
 
@@ -141,6 +190,13 @@ class RearPage(CommonModel):
         related_name="rear_covers_uploaded",
     )
 
+    def __str__(self) -> str:
+        return "RearPage Photo File"
+
+    class Meta:
+        verbose_name = "Rear Page Image"
+        verbose_name_plural = "Rear Page Images"
+
 
 class BusinessAreaPhoto(CommonModel):
 
@@ -151,7 +207,7 @@ class BusinessAreaPhoto(CommonModel):
     file = models.URLField()
     year = models.DateField()
     business_area = models.ForeignKey(
-        "classifications.BusinessArea",
+        "entities.BusinessArea",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -165,93 +221,32 @@ class BusinessAreaPhoto(CommonModel):
         related_name="business_area_photos_uploaded",
     )
 
+    def __str__(self) -> str:
+        return "Business Area Photo File"
 
-# class Photo(CommonModel):
-#     """
-#     Model Definition for Photos
-
-#     null,blank=True allows users to decide where the project belongs (busarea/project)
-#     """
-
-#     file = models.URLField()
-#     description = models.CharField(max_length=100)
-#     uploader = models.ForeignKey(
-#         "users.User",
-#         on_delete=models.CASCADE,
-#         blank=True,
-#         null=True,
-#         related_name="photos_uploaded",
-#     )
-#     category = models.ForeignKey(
-#         "categories.ProjectCategory",
-#         on_delete=models.SET_NULL,
-#         blank=True,
-#         null=True,
-#     )
-#     business_area = models.ForeignKey(
-#         "classifications.BusinessArea",
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     science_project = models.ForeignKey(
-#         "projects.ScienceProject",
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     external_project = models.ForeignKey(
-#         "projects.ExternalProject",
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     student_project = models.ForeignKey(
-#         "projects.StudentProject",
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     core_function_project = models.ForeignKey(
-#         "projects.CoreFunctionProject",
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     core_function_project = models.ForeignKey(
-#         "reports.ARARReport",
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True,
-#         related_name="photos",
-#     )
-
-#     def __str__(self) -> str:
-#         return "Photo File"
+    class Meta:
+        verbose_name = "Business Area Image"
+        verbose_name_plural = "Business Area Images"
 
 
-# class Video(CommonModel):
-#     """
-#     Model Definition for Videos
+class UserAvatar(CommonModel):
+    """
+    Model Definition for User Photos
+    """
 
-#     """
+    file = models.URLField()
+    year = models.DateField()
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="avatar",
+    )
 
-#     file = models.URLField()
-#     project = models.OneToOneField(
-#         "projecs.BaseProject",
-#         on_delete=models.CASCADE,
-#         related_name="videos",
-#     )
+    def __str__(self) -> str:
+        return "User Photo File"
 
-#     def __str__(self) -> str:
-#         return "Video File"
+    class Meta:
+        verbose_name = "User Avatar Image"
+        verbose_name_plural = "User Avatar Images"

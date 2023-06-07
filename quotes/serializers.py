@@ -1,36 +1,8 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
+
+from users.serializers import TinyUserSerializer
 from .models import Quote, QuoteReport
 from rest_framework.exceptions import NotFound
-
-
-class QuoteReportSerializer(ModelSerializer):
-    viewing_user_reported = SerializerMethodField()
-
-    def get_viewing_user_reported(self, quotereport):
-        req = self.context["request"]
-        user = req.user
-        if user.pk == quotereport.reporter.pk:
-            return True
-        else:
-            return False
-
-    class Meta:
-        model = QuoteReport
-        fields = [
-            "quote",
-            "pk",
-            "reporter",
-            "viewing_user_reported",
-        ]
-
-
-class TinyQuoteReportSerializer(ModelSerializer):
-    class Meta:
-        model = QuoteReport
-        fields = [
-            "reporter",
-            "pk",
-        ]
 
 
 class QuoteListSerializer(ModelSerializer):
@@ -47,6 +19,44 @@ class QuoteListSerializer(ModelSerializer):
             "author",
             "created_at",
             "reports_count",
+        ]
+
+
+class QuoteReportSerializer(ModelSerializer):
+    quote = QuoteListSerializer()
+    reporter = TinyUserSerializer(read_only=True)
+    viewing_user_reported = SerializerMethodField()
+
+    def get_viewing_user_reported(self, quotereport):
+        req = self.context["request"]
+        user = req.user
+        if user.pk == quotereport.reporter.pk:
+            return True
+        else:
+            return False
+
+    class Meta:
+        model = QuoteReport
+        fields = [
+            "pk",
+            "quote",
+            "reporter",
+            "reason",
+            "viewing_user_reported",
+        ]
+
+
+class TinyQuoteReportSerializer(ModelSerializer):
+    quote = QuoteListSerializer()
+    reporter = TinyUserSerializer(read_only=True)
+
+    class Meta:
+        model = QuoteReport
+        fields = [
+            "pk",
+            "quote",
+            "reporter",
+            "reason",
         ]
 
 

@@ -1,10 +1,42 @@
+import csv
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from django.forms import model_to_dict
+from django.http import HttpResponse
+from entities.serializers import (
+    TinyBranchSerializer,
+    TinyBusinessAreaSerializer,
+    TinyEntitySerializer,
+)
+
+from users.serializers import TinyUserSerializer
+from .models import User, UserWork, UserProfile
+
+
+# CREATE AN EXPORT TO CSV FILE FOR CURRENT ENTRIES IN DB
+@admin.action(description="Selected Users to CSV")
+def export_selected_users_to_csv(model_admin, req, selected):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="users.csv"'
+
+    field_names = selected[
+        0
+    ]._meta.fields  # Get the field names from the model's metadata
+    writer = csv.DictWriter(response, fieldnames=[field.name for field in field_names])
+    writer.writeheader()
+
+    for user in selected:
+        user_data = model_to_dict(user, fields=[field.name for field in field_names])
+        writer.writerow(user_data)
+
+    return response
 
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    actions = [
+        export_selected_users_to_csv,
+    ]
     fieldsets = (
         (
             "Profile",
@@ -45,6 +77,45 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "first_name",
         "last_name",
+    ]
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    user_id = TinyUserSerializer()
+    member_of = TinyEntitySerializer()
+
+    list_display = [
+        "user_id",
+        "profile_text",
+        "member_of",
+    ]
+
+    list_filter = ["member_of"]
+
+    search_fields = [
+        "name",
+    ]
+
+
+@admin.register(UserWork)
+class UserWorkAdmin(admin.ModelAdmin):
+    user_id = TinyUserSerializer()
+    branch_id = TinyBranchSerializer()
+    business_area_id = TinyBusinessAreaSerializer()
+
+    list_display = [
+        "user_id",
+        "branch_id",
+        "business_area_id",
+    ]
+
+    list_filter = ["branch_id", "business_area_id"]
+
+    search_fields = [
+        "business_area_id",
+        "user_id",
+        "branch_id",
     ]
 
     # """Custom UserAdmin."""
