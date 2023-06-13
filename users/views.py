@@ -25,6 +25,7 @@ import jwt
 from django.conf import settings
 from django.db.models import Q
 from django.db import transaction
+from django.utils.text import capfirst
 
 
 class Me(APIView):
@@ -128,6 +129,44 @@ class ChangePassword(APIView):
 #     def
 
 
+class CheckEmailExists(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            raise ParseError("Email not provided")
+
+        user_exists = User.objects.filter(email=email).exists()
+        return Response(
+            {"exists": user_exists},
+            status=HTTP_200_OK,
+        )
+
+
+class CheckNameExists(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        if not first_name or not last_name:
+            raise ParseError("First name or last name not provided")
+
+        # Capitalize the first letter of first_name and last_name
+        capitalized_first_name = capfirst(first_name)
+        capitalized_last_name = capfirst(last_name)
+
+        user_exists = User.objects.filter(
+            first_name__iexact=capitalized_first_name,
+            last_name__iexact=capitalized_last_name,
+        ).exists()
+        return Response(
+            {"exists": user_exists},
+            status=HTTP_200_OK,
+        )
+
+
 class Users(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -166,12 +205,12 @@ class Users(APIView):
         # email = req.data.get("email")
         # if not email:
         #     raise ParseError("No email provided!")
-        password = req.data.get("password")
-        if not password:
-            print("Error here on pass")
-            raise ParseError("No password provided!")
+        # password = req.data.get("password")
+        # if not password:
+        #     print("Error here on pass")
+        #     raise ParseError("No password provided!")
 
-        print(req.data)
+        # print(req.data)
 
         ser = PrivateTinyUserSerializer(
             data=req.data,
@@ -184,8 +223,10 @@ class Users(APIView):
                         first_name=req.data.get("firstName"),
                         last_name=req.data.get("lastName"),
                     )
-                    new_user.set_password(password)
+                    print(settings.EXTERNAL_PASS)
+                    new_user.set_password(settings.EXTERNAL_PASS)
                     new_user.save()
+                    print(new_user)
                     # new_user.set_first_name("Bob")
                     ser = TinyUserSerializer(new_user)
                     return Response(
