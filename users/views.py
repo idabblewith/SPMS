@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from .models import User, UserProfile, UserWork
 from rest_framework.exceptions import NotFound
 from .serializers import (
+    PrivateTinyUserSerializer,
     TinyUserProfileSerializer,
     TinyUserSerializer,
     TinyUserWorkSerializer,
@@ -22,6 +23,8 @@ from rest_framework.exceptions import ParseError
 from django.contrib.auth import authenticate, login, logout
 import jwt
 from django.conf import settings
+from django.db.models import Q
+from django.db import transaction
 
 
 class Me(APIView):
@@ -121,34 +124,77 @@ class ChangePassword(APIView):
             raise ParseError("Passwords not provieded")
 
 
+# class SearchedUsers(APIView):
+#     def
+
+
 class Users(APIView):
-    def get(self, req):
-        users = User.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        search_term = request.GET.get("searchTerm")
+        # print(search_term)
+        if search_term:
+            # Apply filtering based on the search term
+            users = User.objects.filter(
+                Q(first_name__icontains=search_term)
+                | Q(last_name__icontains=search_term)
+                | Q(email__icontains=search_term)
+                | Q(username__icontains=search_term),
+            )
+        else:
+            users = User.objects.all()
+
         ser = TinyUserSerializer(
             users,
             many=True,
-            context={"request": req},
+            context={"request": request},
         )
+
         return Response(
             ser.data,
             status=HTTP_200_OK,
         )
 
     def post(self, req):
+        # first_name = req.data.get("firstName")
+        # if not first_name:
+        #     raise ParseError("No first name provided!")
+        # last_name = req.data.get("lastName")
+        # if not last_name:
+        #     raise ParseError("No last name provided!")
+        # email = req.data.get("email")
+        # if not email:
+        #     raise ParseError("No email provided!")
         password = req.data.get("password")
         if not password:
+            print("Error here on pass")
             raise ParseError("No password provided!")
-        ser = TinyUserSerializer(
+
+        print(req.data)
+
+        ser = PrivateTinyUserSerializer(
             data=req.data,
         )
         if ser.is_valid():
-            new_user = ser.save()
-            new_user.set_password(password)
-            new_user.save()
-            return Response(
-                TinyUserSerializer(new_user).data,
-                status=HTTP_201_CREATED,
-            )
+            try:
+                # Ensures everything is rolled back if there is an error.
+                with transaction.atomic():
+                    new_user = ser.save(
+                        first_name=req.data.get("firstName"),
+                        last_name=req.data.get("lastName"),
+                    )
+                    new_user.set_password(password)
+                    new_user.save()
+                    # new_user.set_first_name("Bob")
+                    ser = TinyUserSerializer(new_user)
+                    return Response(
+                        ser.data,
+                        status=HTTP_201_CREATED,
+                    )
+            except Exception as e:
+                print(e)
+                raise ParseError(e)
         else:
             return Response(
                 ser.errors,

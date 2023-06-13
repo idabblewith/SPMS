@@ -11,6 +11,41 @@ class StatusChoices(models.TextChoices):
     DONE = "done", "Done"
 
 
+class ProjectTaskCategories(models.TextChoices):
+    pass
+
+
+class ProjectTaskChoices(models.TextChoices):
+    # TODO: Make deletion of projects limited to creator, directorate and admins
+    # TODO: Make the deletion require project leader approval - submitted for deletion
+    # TODO: Make the final deletion require directorate approval - submitted for deletion
+    # TODO: Have users type in the name of the project next to the delete button (like gh)
+    # to prevent errors.
+
+    # PROJECT OWNERS
+
+    # Add team members: A task given to users who start a new project.
+    # The user who started the project will be auto added, and the task
+    # will remain in the todo category unless more members are added or
+    # the user manually moves the card.
+    ADDTEAM = "addteam", "Add Team"
+    AUTHORDOC = "authordoc", "Author Document"
+
+    # Document Specific
+
+    # User Initiated (Actions)
+    SEEKAPPROVAL = "seekapproval", "Seek Approval"
+    APPROVE = "approve", "Approve"  # Approve document
+    DENY = "deny", "Deny"  # Deny document
+    RECALL = "recall", "Recall"  # Recall from approval
+    REQAUTHREV = "requestauthorrevision", "Request Author Revision"
+    REQREVREV = "requestreviewerrevision", "Request Reviewer Revision"
+
+    # System Issued
+    REVIEW = "review", "Review"  # Asses document, and approve or deny.
+    REVISE = "revise", "Revise"  # Revise document
+
+
 class PersonalTask(CommonModel):
     user_id = models.ForeignKey(
         "users.User",
