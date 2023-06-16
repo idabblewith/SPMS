@@ -84,8 +84,8 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    user_id = TinyUserSerializer()
-    member_of = TinyEntitySerializer()
+    # user_id = TinyUserSerializer
+    # member_of = TinyEntitySerializer
 
     list_display = [
         "user_id",
@@ -102,9 +102,9 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(UserWork)
 class UserWorkAdmin(admin.ModelAdmin):
-    user_id = TinyUserSerializer()
-    branch_id = TinyBranchSerializer()
-    business_area_id = TinyBusinessAreaSerializer()
+    user_id = TinyUserSerializer
+    branch_id = TinyBranchSerializer
+    business_area_id = TinyBusinessAreaSerializer
 
     list_display = [
         "user_id",

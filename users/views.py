@@ -1,14 +1,17 @@
 from rest_framework.views import APIView
+
+from contacts.models import UserContact
 from .models import User, UserProfile, UserWork
 from rest_framework.exceptions import NotFound
 from .serializers import (
     PrivateTinyUserSerializer,
-    TinyUserProfileSerializer,
+    ProfilePageSerializer,
     TinyUserSerializer,
-    TinyUserWorkSerializer,
-    UserProfileSerializer,
-    UserSerializer,
-    UserWorkSerializer,
+    # TinyUserProfileSerializer,
+    # TinyUserWorkSerializer,
+    # UserProfileSerializer,
+    # UserSerializer,
+    # UserWorkSerializer,
 )
 from rest_framework.response import Response
 from rest_framework.status import (
@@ -26,37 +29,6 @@ from django.conf import settings
 from django.db.models import Q
 from django.db import transaction
 from django.utils.text import capfirst
-
-
-class Me(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, req):
-        user = req.user
-        ser = TinyUserSerializer(user)
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def put(self, req):
-        user = req.user
-        ser = TinyUserSerializer(
-            user,
-            data=req.data,
-            partial=True,
-        )
-        if ser.is_valid():
-            updated = ser.save()
-            return Response(
-                TinyUserSerializer(updated).data,
-                status=HTTP_202_ACCEPTED,
-            )
-        else:
-            return Response(
-                ser.errors,
-                status=HTTP_400_BAD_REQUEST,
-            )
 
 
 class JWTLogin(APIView):
@@ -125,10 +97,6 @@ class ChangePassword(APIView):
             raise ParseError("Passwords not provieded")
 
 
-# class SearchedUsers(APIView):
-#     def
-
-
 class CheckEmailExists(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -167,6 +135,37 @@ class CheckNameExists(APIView):
         )
 
 
+class Me(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, req):
+        user = req.user
+        ser = TinyUserSerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    def put(self, req):
+        user = req.user
+        ser = TinyUserSerializer(
+            user,
+            data=req.data,
+            partial=True,
+        )
+        if ser.is_valid():
+            updated = ser.save()
+            return Response(
+                TinyUserSerializer(updated).data,
+                status=HTTP_202_ACCEPTED,
+            )
+        else:
+            return Response(
+                ser.errors,
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+
 class Users(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -196,22 +195,6 @@ class Users(APIView):
         )
 
     def post(self, req):
-        # first_name = req.data.get("firstName")
-        # if not first_name:
-        #     raise ParseError("No first name provided!")
-        # last_name = req.data.get("lastName")
-        # if not last_name:
-        #     raise ParseError("No last name provided!")
-        # email = req.data.get("email")
-        # if not email:
-        #     raise ParseError("No email provided!")
-        # password = req.data.get("password")
-        # if not password:
-        #     print("Error here on pass")
-        #     raise ParseError("No password provided!")
-
-        # print(req.data)
-
         ser = PrivateTinyUserSerializer(
             data=req.data,
         )
@@ -223,11 +206,17 @@ class Users(APIView):
                         first_name=req.data.get("firstName"),
                         last_name=req.data.get("lastName"),
                     )
-                    print(settings.EXTERNAL_PASS)
+
+                    # Creates UserWork entry
+                    UserWork.objects.create(user=new_user)
+                    # Creates UserProfile entry
+                    UserProfile.objects.create(user=new_user)
+                    # Creates UserContact entry
+                    UserContact.objects.create(user=new_user)
+
                     new_user.set_password(settings.EXTERNAL_PASS)
                     new_user.save()
                     print(new_user)
-                    # new_user.set_first_name("Bob")
                     ser = TinyUserSerializer(new_user)
                     return Response(
                         ser.data,
@@ -243,192 +232,167 @@ class Users(APIView):
             )
 
 
-class PublicUserDetail(APIView):
-    def go(self, username):
+class UserProfile(APIView):
+    def go(self, pk):
         try:
-            return User.objects.get(username=username)
+            return User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise NotFound
 
-    def get(self, req, username):
-        user = self.go(username)
-        ser = UserSerializer(user)
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def delete(self, req, username):
-        user = self.go(username)
-        user.delete
-        return Response(
-            status=HTTP_204_NO_CONTENT,
-        )
-
-    def put(self, req, username):
-        user = self.go(username)
-        ser = FullUserSerializer(
-            user,
-            data=req.data,
-            partial=True,
-        )
-        if ser.is_valid():
-            updated = ser.save()
-            return Response(
-                FullUserSerializer(updated).data,
-                status=HTTP_202_ACCEPTED,
-            )
-        else:
-            return Response(
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-
-class UserWorks(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, req):
-        all = UserWork.objects.all()
-        ser = TinyUserWorkSerializer(
-            all,
-            many=True,
-        )
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def post(self, req):
-        ser = UserWorkSerializer(
-            data=req.data,
-        )
-        if ser.is_valid():
-            uw = ser.save()
-            return Response(
-                TinyUserWorkSerializer(uw).data,
-                status=HTTP_201_CREATED,
-            )
-        else:
-            return Response(
-                HTTP_400_BAD_REQUEST,
-            )
-
-
-class UserProfiles(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, req):
-        all = UserProfile.objects.all()
-        ser = TinyUserProfileSerializer(
-            all,
-            many=True,
-        )
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def post(self, req):
-        ser = UserProfileSerializer(
-            data=req.data,
-        )
-        if ser.is_valid():
-            up = ser.save()
-            return Response(
-                TinyUserProfileSerializer(up).data,
-                status=HTTP_201_CREATED,
-            )
-        else:
-            return Response(
-                HTTP_400_BAD_REQUEST,
-            )
-
-
-class UserWorkDetail(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def go(self, pk):
-        try:
-            obj = UserWork.objects.get(pk=pk)
-        except UserWork.DoesNotExist:
-            raise NotFound
-        return obj
-
     def get(self, req, pk):
-        uw = self.go(pk)
-        ser = UserWorkSerializer(uw)
+        user = self.go(pk)
+        ser = ProfilePageSerializer(user)
         return Response(
             ser.data,
             status=HTTP_200_OK,
         )
 
-    def delete(self, req, pk):
-        uw = self.go(pk)
-        uw.delete()
-        return Response(
-            status=HTTP_204_NO_CONTENT,
-        )
 
-    def put(self, req, pk):
-        uw = self.go(pk)
-        ser = UserWorkSerializer(
-            uw,
-            data=req.data,
-            partial=True,
-        )
-        if ser.is_valid():
-            updated_uw = ser.save()
-            return Response(
-                TinyUserWorkSerializer(updated_uw).data,
-                status=HTTP_202_ACCEPTED,
-            )
-        else:
-            return Response(
-                ser.errors,
-                status=HTTP_400_BAD_REQUEST,
-            )
+# class UserWorks(APIView):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+
+#     def get(self, req):
+#         all = UserWork.objects.all()
+#         ser = TinyUserWorkSerializer(
+#             all,
+#             many=True,
+#         )
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+
+#     def post(self, req):
+#         ser = UserWorkSerializer(
+#             data=req.data,
+#         )
+#         if ser.is_valid():
+#             uw = ser.save()
+#             return Response(
+#                 TinyUserWorkSerializer(uw).data,
+#                 status=HTTP_201_CREATED,
+#             )
+#         else:
+#             return Response(
+#                 HTTP_400_BAD_REQUEST,
+#             )
 
 
-class UserProfileDetail(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+# class UserProfiles(APIView):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def go(self, pk):
-        try:
-            obj = UserProfile.objects.get(pk=pk)
-        except UserProfile.DoesNotExist:
-            raise NotFound
-        return obj
+#     def get(self, req):
+#         all = UserProfile.objects.all()
+#         ser = TinyUserProfileSerializer(
+#             all,
+#             many=True,
+#         )
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
 
-    def get(self, req, pk):
-        up = self.go(pk)
-        ser = UserProfileSerializer(up)
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
+#     def post(self, req):
+#         ser = UserProfileSerializer(
+#             data=req.data,
+#         )
+#         if ser.is_valid():
+#             up = ser.save()
+#             return Response(
+#                 TinyUserProfileSerializer(up).data,
+#                 status=HTTP_201_CREATED,
+#             )
+#         else:
+#             return Response(
+#                 HTTP_400_BAD_REQUEST,
+#             )
 
-    def delete(self, req, pk):
-        up = self.go(pk)
-        up.delete()
-        return Response(
-            status=HTTP_204_NO_CONTENT,
-        )
 
-    def put(self, req, pk):
-        up = self.go(pk)
-        ser = UserProfileSerializer(
-            up,
-            data=req.data,
-            partial=True,
-        )
-        if ser.is_valid():
-            updated_up = ser.save()
-            return Response(
-                TinyUserProfileSerializer(updated_up).data,
-                status=HTTP_202_ACCEPTED,
-            )
-        else:
-            return Response(
-                ser.errors,
-                status=HTTP_400_BAD_REQUEST,
-            )
+# class UserWorkDetail(APIView):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+
+#     def go(self, pk):
+#         try:
+#             obj = UserWork.objects.get(pk=pk)
+#         except UserWork.DoesNotExist:
+#             raise NotFound
+#         return obj
+
+#     def get(self, req, pk):
+#         uw = self.go(pk)
+#         ser = UserWorkSerializer(uw)
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+
+#     def delete(self, req, pk):
+#         uw = self.go(pk)
+#         uw.delete()
+#         return Response(
+#             status=HTTP_204_NO_CONTENT,
+#         )
+
+#     def put(self, req, pk):
+#         uw = self.go(pk)
+#         ser = UserWorkSerializer(
+#             uw,
+#             data=req.data,
+#             partial=True,
+#         )
+#         if ser.is_valid():
+#             updated_uw = ser.save()
+#             return Response(
+#                 TinyUserWorkSerializer(updated_uw).data,
+#                 status=HTTP_202_ACCEPTED,
+#             )
+#         else:
+#             return Response(
+#                 ser.errors,
+#                 status=HTTP_400_BAD_REQUEST,
+#             )
+
+
+# class UserProfileDetail(APIView):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+
+#     def go(self, pk):
+#         try:
+#             obj = UserProfile.objects.get(pk=pk)
+#         except UserProfile.DoesNotExist:
+#             raise NotFound
+#         return obj
+
+#     def get(self, req, pk):
+#         up = self.go(pk)
+#         ser = UserProfileSerializer(up)
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+
+#     def delete(self, req, pk):
+#         up = self.go(pk)
+#         up.delete()
+#         return Response(
+#             status=HTTP_204_NO_CONTENT,
+#         )
+
+#     def put(self, req, pk):
+#         up = self.go(pk)
+#         ser = UserProfileSerializer(
+#             up,
+#             data=req.data,
+#             partial=True,
+#         )
+#         if ser.is_valid():
+#             updated_up = ser.save()
+#             return Response(
+#                 TinyUserProfileSerializer(updated_up).data,
+#                 status=HTTP_202_ACCEPTED,
+#             )
+#         else:
+#             return Response(
+#                 ser.errors,
+#                 status=HTTP_400_BAD_REQUEST,
+#             )

@@ -10,6 +10,14 @@ from common.models import CommonModel
 # first_name, last_name, email,
 
 
+# Add middle initials, is_external.
+# is_staff set to false by default unless email ends with dpaw or dbca var
+# AND ONLY WHEN MOVING DATA
+# is_external set to true if same as above (no sso)
+
+# username, last_name first_name, email == REQUIRED FOR SSO
+
+
 class User(AbstractUser):
     """
     Custom User Model - references old pk for migration
@@ -53,13 +61,6 @@ class User(AbstractUser):
         help_text="The primary key used in the outdated SPMS",
     )
 
-    # Add middle initials, is_external.
-    # is_staff set to false by default unless email ends with dpaw or dbca var
-    # AND ONLY WHEN MOVING DATA
-    # is_external set to true if same as above (no sso)
-
-    # username, last_name first_name, email == REQUIRED FOR SSO
-
     def __str__(self) -> str:
         return f"{self.username}"
 
@@ -69,20 +70,21 @@ class User(AbstractUser):
 
 
 class UserWork(CommonModel):
-    user_id = models.OneToOneField(
+    user = models.OneToOneField(
         "users.User",
         unique=True,
         on_delete=models.CASCADE,
+        related_name="work",
     )
     # Previously work_center_id
-    branch_id = models.ForeignKey(
+    branch = models.ForeignKey(
         "entities.Branch",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
     # Previously program_id
-    business_area_id = models.ForeignKey(
+    business_area = models.ForeignKey(
         "entities.BusinessArea",
         on_delete=models.SET_NULL,
         null=True,
@@ -105,21 +107,44 @@ class UserProfile(CommonModel):
         MAS = "master", "Master"
         DR = "dr", "Dr."
 
-    user_id = models.OneToOneField(
+    class RoleChoices(models.TextChoices):
+        ECODEV = "ecoinformaticsdeveloper", "Ecoinformatics Developer"
+        EXECDIR = "executivedirector", "Executive Director"
+        ASSEXECDIR = "assistantexecutivedirector", "Assistant Executive Director"
+        BALEAD = "businessarealead", "Business Area Leader"
+        ADMIN = "admin", "Admin"
+        DBCA = "dbcauser", "DBCA Member"
+        EXTERNAL = "exteraluser", "External User"
+
+    user = models.OneToOneField(
         "users.User",
         unique=True,
         on_delete=models.CASCADE,
+        related_name="profile",
+    )
+    role = models.CharField(
+        max_length=30,
+        default=RoleChoices.DBCA,
     )
     title = models.CharField(
         choices=TitleChoices.choices,
         max_length=20,
+        null=True,
+        blank=True,
     )
-    profile_text = models.TextField()
+    profile_text = models.TextField(
+        null=True,
+        blank=True,
+    )
     curriculum_vitae = models.FileField(
         null=True,
         blank=True,
     )
-    expertise = models.CharField(max_length=140)
+    expertise = models.CharField(
+        max_length=140,
+        null=True,
+        blank=True,
+    )
     member_of = models.ForeignKey(
         "entities.Entity",
         on_delete=models.SET_NULL,

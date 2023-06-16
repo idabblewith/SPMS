@@ -9,6 +9,7 @@ from .models import (
     PublicationsImage,
     RearPage,
     BusinessAreaPhoto,
+    UserAvatar,
 )
 
 display_tuple = (
@@ -16,6 +17,15 @@ display_tuple = (
     "year",
     "uploader",
 )
+
+
+@admin.register(UserAvatar)
+class UserAvatarAdmin(admin.ModelAdmin):
+    list_display = (
+        "file",
+        "year",
+        "user",
+    )
 
 
 @admin.register(ARARPDF)
