@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "etl-migrator"
+version = "0.1.0"
+description = ""
+authors = ["idabblewith <109533655+idabblewith@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "etl_migrator"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+beautifulsoup4 = "^4.12.2"
+pandas = "^2.0.2"
+black = "^23.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

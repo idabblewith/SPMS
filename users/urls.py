@@ -4,7 +4,10 @@ from . import views
 urlpatterns = [
     path("", views.Users.as_view()),
     path("me", views.Me.as_view()),
-    path("<int:pk>", views.UserProfile.as_view()),
+    path("<int:pk>", views.UserProfileView.as_view()),
+    path("<int:pk>/pi", views.UpdatePersonalInformation.as_view()),
+    path("<int:pk>/profile", views.UpdateProfile.as_view()),
+    path("<int:pk>/membership", views.UpdateMembership.as_view()),
     path("check-email-exists", views.CheckEmailExists.as_view()),
     path("check-name-exists", views.CheckNameExists.as_view()),
     # path("profiles", views.UserProfile)

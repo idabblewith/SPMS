@@ -1,7 +1,10 @@
 docker-compose.yml
 extracted_table_data
 *.csv
+*.txt
 *.dump
+
+extract_data.py
 
 
 # Byte-compiled / optimized / DLL files

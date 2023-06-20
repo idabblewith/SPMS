@@ -7,6 +7,9 @@ from .serializers import (
     PrivateTinyUserSerializer,
     ProfilePageSerializer,
     TinyUserSerializer,
+    UpdateMembershipSerializer,
+    UpdatePISerializer,
+    UpdateProfileSerializer,
     # TinyUserProfileSerializer,
     # TinyUserWorkSerializer,
     # UserProfileSerializer,
@@ -140,7 +143,7 @@ class Me(APIView):
 
     def get(self, req):
         user = req.user
-        ser = TinyUserSerializer(user)
+        ser = ProfilePageSerializer(user)
         return Response(
             ser.data,
             status=HTTP_200_OK,
@@ -212,7 +215,7 @@ class Users(APIView):
                     # Creates UserProfile entry
                     UserProfile.objects.create(user=new_user)
                     # Creates UserContact entry
-                    UserContact.objects.create(user=new_user)
+                    UserContact.objects.create(user_id=new_user)
 
                     new_user.set_password(settings.EXTERNAL_PASS)
                     new_user.save()
@@ -232,7 +235,7 @@ class Users(APIView):
             )
 
 
-class UserProfile(APIView):
+class UserProfileView(APIView):
     def go(self, pk):
         try:
             return User.objects.get(pk=pk)
@@ -244,8 +247,127 @@ class UserProfile(APIView):
         ser = ProfilePageSerializer(user)
         return Response(
             ser.data,
+            status=HTTP_202_ACCEPTED,
+        )
+
+
+class UpdatePersonalInformation(APIView):
+    def go(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound
+
+    def get(self, req, pk):
+        user = self.go(pk)
+        ser = UpdatePISerializer(user)
+        return Response(
+            ser.data,
             status=HTTP_200_OK,
         )
+
+    def put(self, req, pk):
+        title = req.data.get("title")
+        phone = req.data.get("phone")
+        fax = req.data.get("fax")
+
+        updated_data = {
+            "title": title,
+            "phone": phone,
+            "fax": fax,
+        }
+
+        # Remove empty variables from updated_data
+        updated_data = {
+            key: value
+            for key, value in updated_data.items()
+            if value is not None and value != ""
+        }
+
+        user = self.go(pk)
+        ser = UpdatePISerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_202_ACCEPTED,
+        )
+
+
+class UpdateProfile(APIView):
+    def go(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound
+
+    def get(self, req, pk):
+        user = self.go(pk)
+        ser = UpdateProfileSerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    def put(self, req, pk):
+        user = self.go(pk)
+        ser = UpdateProfileSerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_202_ACCEPTED,
+        )
+
+
+class UpdateMembership(APIView):
+    def go(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound
+
+    def get(self, req, pk):
+        user = self.go(pk)
+        ser = UpdateMembershipSerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    def put(self, req, pk):
+        user = self.go(pk)
+        ser = UpdateMembershipSerializer(user)
+        return Response(
+            ser.data,
+            status=HTTP_202_ACCEPTED,
+        )
+
+
+# class UserProfile(APIView):
+#     def go(self, pk):
+#         try:
+#             return User.objects.get(pk=pk)
+#         except User.DoesNotExist:
+#             raise NotFound
+
+#     def get(self, req, pk):
+#         user = self.go(pk)
+#         ser = ProfilePageSerializer(user)
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+# class UserProfile(APIView):
+#     def go(self, pk):
+#         try:
+#             return User.objects.get(pk=pk)
+#         except User.DoesNotExist:
+#             raise NotFound
+
+#     def get(self, req, pk):
+#         user = self.go(pk)
+#         ser = ProfilePageSerializer(user)
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
 
 
 # class UserWorks(APIView):

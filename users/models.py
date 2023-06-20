@@ -108,13 +108,13 @@ class UserProfile(CommonModel):
         DR = "dr", "Dr."
 
     class RoleChoices(models.TextChoices):
-        ECODEV = "ecoinformaticsdeveloper", "Ecoinformatics Developer"
-        EXECDIR = "executivedirector", "Executive Director"
-        ASSEXECDIR = "assistantexecutivedirector", "Assistant Executive Director"
-        BALEAD = "businessarealead", "Business Area Leader"
-        ADMIN = "admin", "Admin"
-        DBCA = "dbcauser", "DBCA Member"
-        EXTERNAL = "exteraluser", "External User"
+        ECODEV = "Ecoinformatics Developer", "Ecoinformatics Developer"
+        EXECDIR = "Executive Director", "Executive Director"
+        ASSEXECDIR = "Assistant Executive Director", "Assistant Executive Director"
+        BALEAD = "Business Area Leader", "Business Area Leader"
+        ADMIN = "Admin", "Admin"
+        DBCA = "DBCA Member", "DBCA Member"
+        EXTERNAL = "External User", "External User"
 
     user = models.OneToOneField(
         "users.User",
@@ -124,7 +124,7 @@ class UserProfile(CommonModel):
     )
     role = models.CharField(
         max_length=30,
-        default=RoleChoices.DBCA,
+        default=RoleChoices.EXTERNAL,
     )
     title = models.CharField(
         choices=TitleChoices.choices,
