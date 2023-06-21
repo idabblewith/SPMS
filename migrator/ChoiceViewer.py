@@ -33,7 +33,7 @@ class ChoiceViewer:
                 for function_number, function in enumerate(self.lf)
             ]
 
-        self.misc.cls()
+        # self.misc.cls()
         while (
             not type(self.selected_function_in_category) is int
             or type(self.selected_function_in_category) is int
@@ -65,7 +65,7 @@ class ChoiceViewer:
                             selected_function_index
                         ]
                         if selected_function is not None:
-                            self.misc.cls()
+                            # self.misc.cls()
                             selected_function()  # Call the function directly
                             if (
                                 not self.file_handler.selected_file == None
@@ -83,7 +83,7 @@ class ChoiceViewer:
                         return False
 
                 except Exception as e:
-                    self.misc.cls()
+                    # self.misc.cls()
                     print(e)
                     self.misc.nls(
                         "You must type a number in the range. Try again or q to quit."
@@ -113,7 +113,7 @@ class ChoiceViewer:
             try:
                 option_choice = int(option_choice)
             except:
-                self.misc.cls()
+                # self.misc.cls()
                 # print(e)
                 self.misc.nls(
                     "You must type a number in the range 1-3. Try again or q to quit."

@@ -1,6 +1,3 @@
-import sys, os
-import gc
-import misc
 from ChoiceViewer import ChoiceViewer
 from ChoiceLauncher import ChoiceLauncher
 from FileHandler import FileHandler
@@ -8,10 +5,41 @@ from Extractor import Extractor
 from Transformer import Transformer
 from Loader import Loader
 import pandas as pd
+from tqdm import tqdm
+import sys, os, psycopg2
+
+
+# shutil
+import gc
+import misc
+from dotenv import load_dotenv
+
+# Add the project root directory to the Python path
+# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# sys.path.insert(0, project_root)
+# from users.models import User, UserWork, UserProfile
+# from contacts.models import UserContact
+# from medias.models import UserAvatar, BusinessAreaPhoto
+# from entities.models import BusinessArea, Branch, Entity, Division, ResearchFunction
+
+# import
 
 
 class Migrator:
     def __init__(self):
+        # self.models = [
+        #     User,
+        #     UserWork,
+        #     UserProfile,
+        #     UserContact,
+        #     UserAvatar,
+        #     BusinessArea,
+        #     Branch,
+        #     Entity,
+        #     Division,
+        #     ResearchFunction,
+        #     BusinessAreaPhoto,
+        # ]
         self.main_looping = True
         self.choice_viewer = None
         self.choice_launcher = None
@@ -28,6 +56,7 @@ class Migrator:
             "2": "SPECIFY",
             # "3": so on
         }
+        self.parent_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
     def display_projects(self):
         self.kawaii_print(list(self.projects_list.values()))
@@ -68,13 +97,43 @@ class Migrator:
 
     def instantiate_classes(self):
         self.file_handler = (
-            FileHandler(project=self.project, pd=pd, os=os, misc=misc)
+            FileHandler(
+                project=self.project,
+                pd=pd,
+                os=os,
+                misc=misc,
+                # shutil=shutil,
+                tqdm=tqdm,
+            )
             if self.file_handler == None
             else self.file_handler
         )
-        self.extractor = Extractor(self.file_handler, misc)
-        self.transformer = Transformer(self.file_handler, misc)
-        self.loader = Loader(self.file_handler, misc)
+        self.extractor = Extractor(
+            file_handler=self.file_handler,
+            misc=misc,
+            tqdm=tqdm,
+            pd=pd,
+        )
+        self.transformer = Transformer(
+            file_handler=self.file_handler,
+            misc=misc,
+            tqdm=tqdm,
+            pd=pd,
+        )
+        self.loader = Loader(
+            file_handler=self.file_handler,
+            misc=misc,
+            tqdm=tqdm,
+            pd=pd,
+            psycopg2=psycopg2,
+            os=os,
+            load_dotenv=load_dotenv,
+            parent_directory=self.parent_directory
+            # User=
+            # Entity=
+            # BusinessArea=
+            # BusinessAreaPhoto=
+        )
         self.extraction_functions = self.extractor.functions
         self.transformation_functions = self.transformer.functions
         self.loading_functions = self.loader.functions

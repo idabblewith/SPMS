@@ -1,6 +1,16 @@
 class FileHandler:
-    def __init__(self, project, pd, os, misc):
+    def __init__(
+        self,
+        project,
+        pd,
+        os,
+        misc,
+        #  shutil,
+        tqdm,
+    ):
+        self.tqdm = tqdm
         self.misc = misc
+        # self.shutil = shutil
         self.pd = pd
         self.os = os
         self.project = project
@@ -21,6 +31,11 @@ class FileHandler:
                 "function": self.display_files_in_directory,
             },
         ]
+
+    def display_file_being_worked_on(self, file):
+        print(
+            f"==============================================================\n\nWORKING ON {file}"
+        )
 
     def get_base_directory(self, project):
         dir = ""
@@ -200,6 +215,32 @@ class FileHandler:
     #     # Set the modded file as the new selected file
     #     self.selected_file = modded_file_path
     #     return self.selected_file
+
+    def move_modded_to_clean_on_continuous_batch_completion(self):
+        should_move = self.misc.nli(
+            "Move files to clean directory?\nType 'y' for yes, otherwise press enter."
+        )
+        if should_move in self.misc.yes_array:
+            # Select files to move
+            files_to_move = self.get_modded_files_for_batch()
+            # input(files_to_move)
+
+            # Move files
+            for file in files_to_move:
+                destination = self.clean_directory
+                print(f"MOVING {file} to {destination}")
+                print(destination)
+
+                try:
+                    # Moves to designated location and replaces file if it already exists.
+                    # self.shutil.move(file, destination, copy_function=self.shutil.copy2)
+                    self.os.replace(
+                        file,
+                        self.os.path.join(destination, self.os.path.basename(file)),
+                    )
+                    print(f"Moved file '{file}' to {destination}")
+                except Exception as e:
+                    print(f"Error moving file '{file}': {str(e)}")
 
     def save_df_as_csv(self, df, selected_file, new_location):
         # Get the file name

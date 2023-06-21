@@ -5,7 +5,9 @@ import time
 
 
 class Transformer:
-    def __init__(self, file_handler, misc):
+    def __init__(self, file_handler, misc, tqdm, pd):
+        self.pd = pd
+        self.tqdm = tqdm
         self.misc = misc
         self.file_handler = file_handler
         self.selected_batch = None
@@ -73,7 +75,7 @@ class Transformer:
         if continous == True:
             self.selected_batch = files
             self.file_handler.selected_batch = files
-            self.misc.nli(self.selected_batch)
+            # self.misc.nli(self.selected_batch)
             self.misc.nls(
                 f"{self.misc.bcolors.OKBLUE}Continuing with this batch{self.misc.bcolors.ENDC}"
             )
@@ -116,11 +118,35 @@ class Transformer:
         self.functions = funcs
 
     def format_time(self, seconds):
-        minutes = seconds // 60
+        minutes = int(seconds // 60)
         seconds %= 60
         milliseconds = int((seconds - int(seconds)) * 1000)
         seconds = int(seconds)
-        return f"{minutes} minutes, {seconds} seconds, {milliseconds} milliseconds"
+
+        time_parts = []
+
+        if minutes > 0:
+            # Use 'min' instead of 'mins' if minutes is less than 2
+            minutes_str = f"{minutes} min" if minutes < 2 else f"{minutes} mins"
+            time_parts.append(minutes_str)
+
+        if seconds > 0:
+            # Use 'second' instead of 'seconds' if seconds is less than 2
+            seconds_str = f"{seconds} second" if seconds < 2 else f"{seconds} seconds"
+            time_parts.append(seconds_str)
+
+        if milliseconds > 0 and minutes <= 1:
+            # Use 'millisecond' instead of 'milliseconds' if milliseconds is less than 2
+            milliseconds_str = (
+                f"{milliseconds} millisecond"
+                if milliseconds < 2
+                else f"{milliseconds} milliseconds"
+            )
+            time_parts.append(milliseconds_str)
+
+        time_string = ", ".join(time_parts)
+
+        return f"{self.misc.bcolors.ENDC}{self.misc.bcolors.OKGREEN}{time_string}{self.misc.bcolors.ENDC}{self.misc.bcolors.OKBLUE}"
 
     # HELPER FUNCTIONS END ======================================================================================
 
@@ -142,6 +168,9 @@ class Transformer:
                     selected_file = self.selected_file
                     df = self.df
 
+                    print(
+                        f"==============================================================\n\nWORKING ON {self.selected_file}"
+                    )
                     # Remove HTML tags from string columns
                     with warnings.catch_warnings():
                         warnings.filterwarnings(
@@ -164,7 +193,7 @@ class Transformer:
                     self.misc.nls(msg)
 
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKGREEN}HTML FREE VERSION CREATED IN {self.format_time(elapsed_time)}! SEE {self.selected_file}{self.misc.bcolors.ENDC}."
+                        f"{self.misc.bcolors.OKGREEN}HTML FREE VERSION CREATED IN {self.format_time(elapsed_time)}!{self.misc.bcolors.ENDC}."
                     )
 
                 # If NOT continuing with a selected file
@@ -179,6 +208,7 @@ class Transformer:
 
                     # Read the CSV file into a DataFrame
                     df = self.file_handler.read_csv_and_prepare_df(selected_file)
+                    self.file_handler.display_file_being_worked_on(selected_file)
 
                     # Remove HTML tags from string columns
                     with warnings.catch_warnings():
@@ -202,7 +232,7 @@ class Transformer:
                     self.misc.nls(msg)
 
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKGREEN}HTML FREE VERSION CREATED IN {self.format_time(elapsed_time)}! SEE {self.selected_file}{self.misc.bcolors.ENDC}."
+                        f"{self.misc.bcolors.OKGREEN}HTML FREE VERSION CREATED IN {self.format_time(elapsed_time)}!{self.misc.bcolors.ENDC}."
                     )
 
                     # Determine if should continue operations with selected df and file
@@ -215,7 +245,13 @@ class Transformer:
 
                 updated_files = []
                 # Batch clean
-                for file in files:
+                for file in self.tqdm(
+                    files,
+                    unit="file",
+                    desc="Processing files",
+                    bar_format="{desc}: {bar}",
+                ):
+                    self.file_handler.display_file_being_worked_on(file)
                     file_start_time = time.time()
                     df = self.file_handler.read_csv_and_prepare_df(file)
                     # self.df = df
@@ -241,7 +277,7 @@ class Transformer:
                     )
                 elapsed_time = time.time() - start_time
                 self.misc.nls(
-                    f"{self.misc.bcolors.OKGREEN}Batch cleaning completed in {self.format_time(elapsed_time)}! Modified files are in the modded_data folder.{self.misc.bcolors.ENDC}"
+                    f"{self.misc.bcolors.OKGREEN}Batch cleaning completed in {self.format_time(elapsed_time)}!{self.misc.bcolors.ENDC}"
                 )
 
                 self.reset_file_and_df()
@@ -251,8 +287,17 @@ class Transformer:
             # Batch clean
             start_time = time.time()
             updated_files = []
-            for file in batch_files:
+            for file in self.tqdm(
+                batch_files,
+                unit="file",
+                desc="Processing files",
+                bar_format="{desc}: {bar}",
+            ):
+                print(
+                    f"==============================================================\n\nWORKING ON {file}"
+                )
                 file_start_time = time.time()
+
                 df = self.file_handler.read_csv_and_prepare_df(file)
                 # self.df = df
                 with warnings.catch_warnings():
@@ -273,7 +318,7 @@ class Transformer:
                 updated_files.append(selected_file)
                 fin_time = time.time() - file_start_time
                 self.misc.nls(
-                    f"{self.misc.bcolors.OKBLUE}HTML FREE VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                    f"{self.misc.bcolors.OKBLUE}HTML FREE VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                 )
             elapsed_time = time.time() - start_time
             self.misc.nls(
@@ -290,7 +335,7 @@ class Transformer:
     # SPMS FUNCTIONS START ======================================================================================
 
     def spms_run_all(self):
-        input("NOT YET IMPLEMENTED. PRESS ENTER TO CONTINUE.")
+        # input("NOT YET IMPLEMENTED. PRESS ENTER TO CONTINUE.")
         start_time = time.time()
         self.selected_batch = self.file_handler.get_raw_files_for_batch()
         self.spms_remove_columns_from_selected_df(
@@ -300,8 +345,12 @@ class Transformer:
             continue_with_batch=True, batch_files=self.selected_batch
         )
         self.clean_html(continue_with_batch=True, batch_files=self.selected_batch)
-        self.misc.cls()
+        # self.misc.cls()
         elapsed_time = self.format_time(time.time() - start_time)
+        self.misc.nls(
+            f"{self.misc.bcolors.WARNING}Moving files to clean directory...{self.misc.bcolors.ENDC}"
+        )
+        self.file_handler.move_modded_to_clean_on_continuous_batch_completion()
         self.misc.nls(
             f"{self.misc.bcolors.OKGREEN}Complete! Entire operation took {elapsed_time} to complete.{self.misc.bcolors.ENDC}"
         )
@@ -320,6 +369,7 @@ class Transformer:
                     # Use existing file and df
                     selected_file = self.selected_file
                     df = self.df
+                    self.file_handler.display_file_being_worked_on(selected_file)
 
                     # Main operation (removing rows with "No changes made.")
                     if "comment" in df.columns:
@@ -335,7 +385,7 @@ class Transformer:
                     # Calculate time for file and display
                     fin_time = time.time() - file_start_time
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKBLUE}NO COMMENT ENTRY REMOVED VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                        f"{self.misc.bcolors.OKBLUE}NO COMMENT ENTRY REMOVED VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                     )
 
                 # If there is no selected file/data_frame saved to the instance
@@ -347,7 +397,7 @@ class Transformer:
                         directory=directory,
                     )
                     start_time = time.time()
-
+                    self.file_handler.display_file_being_worked_on(selected_file)
                     # Read the CSV file into a DataFrame
                     print("reading csv into df...")
                     df = self.file_handler.read_csv_and_prepare_df(selected_file)
@@ -366,7 +416,7 @@ class Transformer:
                     # Calculate time for file and display
                     fin_time = time.time() - file_start_time
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                        f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                     )
 
                 self.misc.nls(msg)
@@ -382,7 +432,13 @@ class Transformer:
                 start_time = time.time()
 
                 # Logic per file in directory
-                for file in files:
+                for file in self.tqdm(
+                    files,
+                    unit="file",
+                    desc="Processing files",
+                    bar_format="{desc}: {bar}",
+                ):
+                    self.file_handler.display_file_being_worked_on(file)
                     file_start_time = time.time()
                     df = self.file_handler.read_csv_and_prepare_df(file)
 
@@ -401,7 +457,7 @@ class Transformer:
                     # Calculate time for file and display
                     fin_time = time.time() - file_start_time
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                        f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                     )
 
                 # Calculate total time and display
@@ -416,7 +472,15 @@ class Transformer:
             start_time = time.time()
             updated_files = []
             # Logic per file in directory
-            for file in batch_files:
+            for file in self.tqdm(
+                batch_files,
+                unit="file",
+                desc="Processing files",
+                bar_format="{desc}: {bar}",
+            ):
+                print(
+                    f"==============================================================\n\nWORKING ON {file}"
+                )
                 file_start_time = time.time()
                 df = self.file_handler.read_csv_and_prepare_df(file)
 
@@ -435,7 +499,7 @@ class Transformer:
                 # Calculate time for file and display
                 fin_time = time.time() - file_start_time
                 self.misc.nls(
-                    f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                    f"{self.misc.bcolors.OKBLUE}NULL ENTRY VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                 )
 
             # Calculate total time and display
@@ -473,7 +537,9 @@ class Transformer:
                 if self.df != None and self.df != "":
                     # Drop the columns
                     print("dropping columns...")
+                    selected_file = self.selected_file
                     df = self.df.drop(columns=columns_to_exclude, errors="ignore")
+                    self.file_handler.display_file_being_worked_on(selected_file)
 
                     # Save the file
                     print("saving...")
@@ -486,7 +552,7 @@ class Transformer:
                     elapsed_time = time.time() - start_time
                     # Print time to complete
                     self.misc.nli(
-                        f"{self.misc.bcolors.OKBLUE}Columns dropped in {self.format_time(elapsed_time)}! Press any key.{self.misc.bcolors.ENDC}"
+                        f"{self.misc.bcolors.OKBLUE}Columns dropped in {self.format_time(elapsed_time)}!{self.misc.bcolors.ENDC}"
                     )
 
                 # If there is no selected file/data_frame saved to the instance
@@ -497,6 +563,7 @@ class Transformer:
                     selected_file = self.file_handler.display_files_in_directory(
                         directory=directory,
                     )
+                    self.file_handler.display_file_being_worked_on(selected_file)
                     start_time = time.time()
 
                     # Read the CSV file into a DataFrame
@@ -533,7 +600,13 @@ class Transformer:
                 files, _ = self.determine_folder_and_return_files()
                 updated_files = []
 
-                for file in files:
+                for file in self.tqdm(
+                    files,
+                    unit="file",
+                    desc="Processing files",
+                    bar_format="{desc}: {bar}",
+                ):
+                    self.file_handler.display_file_being_worked_on(file)
                     file_start_time = time.time()
                     selected_file = file
                     df = self.file_handler.read_csv_and_prepare_df(selected_file)
@@ -549,7 +622,7 @@ class Transformer:
                     # Calculate time for file and display
                     fin_time = time.time() - file_start_time
                     self.misc.nls(
-                        f"{self.misc.bcolors.OKBLUE}COLUMN-DROPPED VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                        f"{self.misc.bcolors.OKBLUE}COLUMN-DROPPED VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                     )
                 elapsed_time = time.time() - start_time
                 self.misc.nls(
@@ -561,7 +634,15 @@ class Transformer:
         else:
             start_time = time.time()
             updated_files = []
-            for file in batch_files:
+            for file in self.tqdm(
+                batch_files,
+                unit="file",
+                desc="Processing files",
+                bar_format="{desc}: {bar}",
+            ):
+                print(
+                    f"==============================================================\n\nWORKING ON {file}"
+                )
                 file_start_time = time.time()
                 selected_file = file
                 df = self.file_handler.read_csv_and_prepare_df(selected_file)
@@ -578,7 +659,7 @@ class Transformer:
                 # Calculate time for file and display
                 fin_time = time.time() - file_start_time
                 self.misc.nls(
-                    f"{self.misc.bcolors.OKBLUE}COLUMN-DROPPED VERSION CREATED IN {self.format_time(fin_time)}! SEE {selected_file}.{self.misc.bcolors.ENDC}"
+                    f"{self.misc.bcolors.OKBLUE}COLUMN-DROPPED VERSION CREATED IN {self.format_time(fin_time)}!{self.misc.bcolors.ENDC}"
                 )
 
             # Calculate total time and display
@@ -588,7 +669,7 @@ class Transformer:
             )
 
             self.reset_file_and_df()
-            input("here")
+            # input("here")
             self.continue_operations_on_modded_batch(
                 files=updated_files,
                 continous=True,

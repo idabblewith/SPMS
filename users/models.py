@@ -52,6 +52,7 @@ class User(AbstractUser):
         ("email address"),
         null=True,
         blank=True,
+        unique=True,
     )
 
     old_pk = models.IntegerField(

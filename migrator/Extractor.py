@@ -1,5 +1,7 @@
 class Extractor:
-    def __init__(self, file_handler, misc):
+    def __init__(self, file_handler, misc, tqdm, pd):
+        self.pd = pd
+        self.tqdm = tqdm
         self.misc = misc
         self.file_handler = file_handler
         self.spms_functions = [
