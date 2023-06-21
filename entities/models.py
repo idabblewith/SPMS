@@ -29,7 +29,8 @@ class Branch(CommonModel):
 
     """Model Definition for Business Area (Previously Workcenter)"""
 
-    entity_id = models.ForeignKey(
+    old_id = models.IntegerField()
+    entity = models.ForeignKey(
         "entities.Entity",
         on_delete=models.CASCADE,
         null=True,
@@ -74,6 +75,14 @@ class BusinessArea(CommonModel):
         null=True,
         on_delete=models.SET_NULL,  # Prevents deletion of model object if leader deleted
         related_name="business_areas_led",
+    )
+    finance_admin = models.ForeignKey(
+        "users.User",
+        default=1,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="business_area_finances_handled",
     )
 
     data_custodian = models.ForeignKey(

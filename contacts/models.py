@@ -23,12 +23,19 @@ class Address(CommonModel):
         related_name="address",
     )
     street = models.CharField(max_length=140)
-    suburb = models.CharField(max_length=140)
+    suburb = models.CharField(
+        max_length=140,
+        null=True,
+        blank=True,
+    )
     city = models.CharField(max_length=140)
     zipcode = models.IntegerField()
     state = models.CharField(max_length=140)
     country = models.CharField(max_length=140)
-    pobox = models.IntegerField()
+    pobox = models.CharField(
+        null=True,
+        blank=True,
+    )
 
     def __str__(self) -> str:
         return f"{self.street} | {self.state}"
@@ -62,7 +69,7 @@ class EntityContact(CommonModel):
     Model definition for contact details of Entity
     """
 
-    entity_id = models.OneToOneField(
+    entity = models.OneToOneField(
         "entities.Entity",
         on_delete=models.CASCADE,
         related_name="contact",
