@@ -234,7 +234,7 @@ class AgencyImage(CommonModel):
     """
 
     file = models.URLField()
-    user = models.ForeignKey(
+    agency = models.ForeignKey(
         "agencies.Agency",
         on_delete=models.CASCADE,
         blank=True,

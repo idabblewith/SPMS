@@ -66,8 +66,10 @@ class BusinessArea(CommonModel):
     slug = models.SlugField(
         help_text="A URL-sage acronym of the BA's name without whitespace",
     )
+
     published = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
     leader = models.ForeignKey(  # Renamed from program_leader
         "users.User",
         default=1,
@@ -94,7 +96,26 @@ class BusinessArea(CommonModel):
         related_name="business_area_data_handled",
     )
 
-    focus = models.CharField(max_length=250)
+    cost_center = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+    old_leader_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+    old_finance_admin_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+    old_data_custodian_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    focus = models.CharField(
+        max_length=1250
+    )  # NOTE SPECIES AND COMMUNITIES 1230 words (this was originally 250 words)
     introduction = models.TextField()
     image = models.ForeignKey(
         "medias.BusinessAreaPhoto",
@@ -153,6 +174,8 @@ class Division(CommonModel):
         help_text="The Approver receives notifications about outstanding requests and has permission \
             to approve documents. The approver can be anyone in a supervisory role, including the Director.",
     )
+    old_id = models.IntegerField()
+    old_director_id = models.IntegerField()
 
     def __str__(self) -> str:
         return f"{self.name}"
