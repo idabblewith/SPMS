@@ -5,18 +5,18 @@ from common.models import CommonModel
 class Address(CommonModel):
 
     """
-    Model Definition for addresses of entities and their branches
+    Model Definition for addresses of agencies and their branches
     """
 
-    entity = models.ForeignKey(
-        "entities.Entity",
+    agency = models.ForeignKey(
+        "agencies.agency",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="address",
     )
     branch = models.ForeignKey(
-        "entities.Branch",
+        "agencies.Branch",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -46,7 +46,7 @@ class Address(CommonModel):
 
 
 class UserContact(CommonModel):
-    user_id = models.OneToOneField(
+    user = models.OneToOneField(
         "users.User",
         on_delete=models.CASCADE,
         related_name="contact",
@@ -64,13 +64,13 @@ class UserContact(CommonModel):
         verbose_name_plural = "User Contacts"
 
 
-class EntityContact(CommonModel):
+class AgencyContact(CommonModel):
     """
-    Model definition for contact details of Entity
+    Model definition for contact details of agency
     """
 
-    entity = models.OneToOneField(
-        "entities.Entity",
+    agency = models.OneToOneField(
+        "agencies.agency",
         on_delete=models.CASCADE,
         related_name="contact",
     )
@@ -86,20 +86,20 @@ class EntityContact(CommonModel):
     )
 
     def __str__(self) -> str:
-        return f"{self.entity_id.name} Contact"
+        return f"{self.agency.name} Contact"
 
     class Meta:
-        verbose_name = "Entity Contact"
-        verbose_name_plural = "Entity Contacts"
+        verbose_name = "agency Contact"
+        verbose_name_plural = "agency Contacts"
 
 
 class BranchContact(CommonModel):
     """
-    Model definition for contact details of Entity Branch
+    Model definition for contact details of agency Branch
     """
 
-    branch_id = models.OneToOneField(
-        "entities.Branch",
+    branch = models.OneToOneField(
+        "agencies.Branch",
         on_delete=models.CASCADE,
         related_name="contact",
     )

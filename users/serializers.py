@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from entities.serializers import (
+from agencies.serializers import (
     TinyBranchSerializer,
     TinyBusinessAreaSerializer,
-    TinyEntitySerializer,
+    TinyAgencySerializer,
 )
 from medias.serializers import UserAvatarSerializer
 from .models import User, UserWork, UserProfile
@@ -27,7 +27,7 @@ class UpdatePISerializer(serializers.ModelSerializer):
             "expertise",
             "title",
             "about",
-            "entity",
+            "agency",
             "branch",
         )
 
@@ -47,10 +47,8 @@ class ProfilePageSerializer(serializers.ModelSerializer):
     expertise = serializers.CharField(source="profile.expertise")
     title = serializers.CharField(source="profile.title")
     about = serializers.CharField(source="profile.about")
-    entity = TinyEntitySerializer(source="profile.entity")
+    agency = TinyAgencySerializer(source="profile.agency")
     branch = serializers.CharField(source="work.branch")
-
-    # entity = serializers.CharField(source="work.branch.entity")  # Assuming 'branch' has a foreign key to 'Entity' model
 
     class Meta:
         model = User
@@ -69,7 +67,7 @@ class ProfilePageSerializer(serializers.ModelSerializer):
             "expertise",
             "title",
             "about",
-            "entity",
+            "agency",
             "branch",
         )
 
@@ -113,52 +111,3 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
-
-
-# class TinyUserWorkSerializer(serializers.ModelSerializer):
-#     user_id = TinyUserSerializer()
-#     branch_id = TinyBranchSerializer()
-#     business_area_id = TinyBusinessAreaSerializer()
-
-#     class Meta:
-#         model = UserWork
-#         fields = (
-#             "user_id",
-#             "branch_id",
-#             "business_area_id",
-#         )
-
-
-# class UserWorkSerializer(serializers.ModelSerializer):
-#     user_id = TinyUserSerializer()
-#     branch_id = TinyBranchSerializer()
-#     business_area_id = TinyBusinessAreaSerializer()
-
-#     class Meta:
-#         model = UserWork
-#         fields = "__all__"
-
-
-# class TinyUserProfileSerializer(serializers.ModelSerializer):
-#     user_id = TinyUserSerializer()
-#     member_of = TinyEntitySerializer()
-#     image = PhotoSerializer()
-
-#     class Meta:
-#         model = UserProfile
-#         fields = (
-#             "user_id",
-#             "profile_text",
-#             "expertise",
-#             "member_of",
-#         )
-
-
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     user_id = TinyUserSerializer()
-#     member_of = TinyEntitySerializer()
-#     image = PhotoSerializer()
-
-#     class Meta:
-#         model = UserProfile
-#         fields = "__all__"

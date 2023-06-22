@@ -21,14 +21,14 @@ from django.utils import timezone
 
 import time
 
-from .models import UserContact, BranchContact, EntityContact, Address
+from .models import UserContact, BranchContact, AgencyContact, Address
 from .serializers import (
     BranchContactSerializer,
     TinyBranchContactSerializer,
     UserContactSerializer,
     TinyUserContactSerializer,
-    EntityContactSerializer,
-    TinyEntityContactSerializer,
+    AgencyContactSerializer,
+    TinyAgencyContactSerializer,
     AddressSerializer,
     TinyAddressSerializer,
 )
@@ -41,7 +41,7 @@ class Addresses(APIView):
 
     def get(self, req):
         all = Address.objects.all()
-        ser = TinyEntityContactSerializer(
+        ser = TinyAgencyContactSerializer(
             all,
             many=True,
         )
@@ -67,12 +67,12 @@ class Addresses(APIView):
             )
 
 
-class EntityContacts(APIView):
+class AgencyContacts(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = EntityContact.objects.all()
-        ser = TinyEntityContactSerializer(
+        all = AgencyContact.objects.all()
+        ser = TinyAgencyContactSerializer(
             all,
             many=True,
         )
@@ -82,13 +82,13 @@ class EntityContacts(APIView):
         )
 
     def post(self, req):
-        ser = EntityContactSerializer(
+        ser = AgencyContactSerializer(
             data=req.data,
         )
         if ser.is_valid():
-            entity_contact = ser.save()
+            Agency_contact = ser.save()
             return Response(
-                TinyEntityContactSerializer(entity_contact).data,
+                TinyAgencyContactSerializer(Agency_contact).data,
                 status=HTTP_201_CREATED,
             )
         else:
@@ -253,42 +253,42 @@ class BranchContactDetail(APIView):
             )
 
 
-class EntityContactDetail(APIView):
+class AgencyContactDetail(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def go(self, pk):
         try:
-            obj = EntityContact.objects.get(pk=pk)
-        except EntityContact.DoesNotExist:
+            obj = AgencyContact.objects.get(pk=pk)
+        except AgencyContact.DoesNotExist:
             raise NotFound
         return obj
 
     def get(self, req, pk):
-        entity_contact = self.go(pk)
-        ser = EntityContactSerializer(entity_contact)
+        Agency_contact = self.go(pk)
+        ser = AgencyContactSerializer(Agency_contact)
         return Response(
             ser.data,
             status=HTTP_200_OK,
         )
 
     def delete(self, req, pk):
-        entity_contact = self.go(pk)
-        entity_contact.delete()
+        Agency_contact = self.go(pk)
+        Agency_contact.delete()
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
     def put(self, req, pk):
-        entity_contact = self.go(pk)
-        ser = EntityContactSerializer(
-            entity_contact,
+        Agency_contact = self.go(pk)
+        ser = AgencyContactSerializer(
+            Agency_contact,
             data=req.data,
             partial=True,
         )
         if ser.is_valid():
-            updated_entity_contact = ser.save()
+            updated_Agency_contact = ser.save()
             return Response(
-                TinyEntityContactSerializer(updated_entity_contact).data,
+                TinyAgencyContactSerializer(updated_Agency_contact).data,
                 status=HTTP_202_ACCEPTED,
             )
         else:

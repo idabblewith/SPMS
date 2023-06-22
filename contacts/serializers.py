@@ -2,20 +2,20 @@
 # TinyBranchContactSerializer,
 # UserContactSerializer,
 # TinyUserContactSerializer,
-# EntityContactSerializer,
-# TinyEntityContactSerializer,
+# AgencyContactSerializer,
+# TinyAgencyContactSerializer,
 # AddressSerializer,
 # TinyAddressSerializer,
 
 from rest_framework import serializers
 
-from entities.serializers import TinyBranchSerializer, TinyEntitySerializer
-from .models import Address, EntityContact, UserContact, BranchContact
+from agencies.serializers import TinyBranchSerializer, TinyAgencySerializer
+from .models import Address, AgencyContact, UserContact, BranchContact
 from users.serializers import TinyUserSerializer
 
 
 class TinyAddressSerializer(serializers.ModelSerializer):
-    entity = TinyEntitySerializer()
+    agency = TinyAgencySerializer()
     branch = TinyBranchSerializer()
 
     class Meta:
@@ -28,7 +28,7 @@ class TinyAddressSerializer(serializers.ModelSerializer):
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    entity = TinyEntitySerializer()
+    agency = TinyAgencySerializer()
     branch = TinyBranchSerializer()
 
     class Meta:
@@ -55,24 +55,24 @@ class UserContactSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TinyEntityContactSerializer(serializers.ModelSerializer):
-    entity_id = TinyEntitySerializer()
+class TinyAgencyContactSerializer(serializers.ModelSerializer):
+    agency_id = TinyAgencySerializer()
     address = TinyAddressSerializer()
 
     class Meta:
-        model = EntityContact
+        model = AgencyContact
         fields = (
-            "entity_id",
+            "agency_id",
             "email",
         )
 
 
-class EntityContactSerializer(serializers.ModelSerializer):
-    entity_id = TinyEntitySerializer()
+class AgencyContactSerializer(serializers.ModelSerializer):
+    agency_id = TinyAgencySerializer()
     address = TinyAddressSerializer()
 
     class Meta:
-        model = EntityContact
+        model = AgencyContact
         fields = "__all__"
 
 

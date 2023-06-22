@@ -206,7 +206,7 @@ class BusinessAreaPhoto(CommonModel):
 
     file = models.URLField()
     business_area = models.ForeignKey(
-        "entities.BusinessArea",
+        "agencies.BusinessArea",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -228,6 +228,28 @@ class BusinessAreaPhoto(CommonModel):
         verbose_name_plural = "Business Area Images"
 
 
+class AgencyImage(CommonModel):
+    """
+    Model Definition for Agency Photos (DBCA's image)
+    """
+
+    file = models.URLField()
+    user = models.ForeignKey(
+        "agencies.Agency",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="image",
+    )
+
+    def __str__(self) -> str:
+        return "Agency Photo File"
+
+    class Meta:
+        verbose_name = "Agency Image"
+        verbose_name_plural = "Agency Images"
+
+
 class UserAvatar(CommonModel):
     """
     Model Definition for User Photos
@@ -236,7 +258,7 @@ class UserAvatar(CommonModel):
     file = models.URLField()
     user = models.ForeignKey(
         "users.User",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="avatar",

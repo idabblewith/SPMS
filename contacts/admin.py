@@ -1,19 +1,19 @@
 from django.contrib import admin
-from .models import EntityContact, BranchContact, UserContact, Address
+from .models import AgencyContact, BranchContact, UserContact, Address
 
 
-@admin.register(EntityContact)
-class EntityContactAdmin(admin.ModelAdmin):
+@admin.register(AgencyContact)
+class AgencyContactAdmin(admin.ModelAdmin):
     list_display = [
-        # "entity_id__name",
-        "entity_id",
+        # "agency_id__name",
+        "agency_id",
         "email",
     ]
 
-    list_filter = ["entity_id__key_stakeholder"]
+    list_filter = ["agency_id__key_stakeholder"]
 
     search_fields = [
-        "entity_id__name",
+        "agency_id__name",
     ]
 
 

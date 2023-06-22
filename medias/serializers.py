@@ -28,6 +28,17 @@ class UserAvatarSerializer(ModelSerializer):
             "user",
         ]
 
+
+class AgencyImageSerializer(ModelSerializer):
+    # user = TinyUserSerializer()
+    class Meta:
+        model = UserAvatar
+        fields = [
+            "pk",
+            "file",
+            "agency",
+        ]
+
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
 

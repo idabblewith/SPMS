@@ -2,9 +2,9 @@ from django.db import models
 from common.models import CommonModel
 
 
-class Entity(CommonModel):
+class Agency(CommonModel):
 
-    """Model Definition for Entity (Previously defined on UserModel)"""
+    """Model Definition for Agency (Previously defined on UserModel)"""
 
     name = models.CharField(max_length=140)
     key_stakeholder = models.ForeignKey(
@@ -20,8 +20,8 @@ class Entity(CommonModel):
         return f"{self.name}"
 
     class Meta:
-        verbose_name = "Entity"
-        verbose_name_plural = "Entities"
+        verbose_name = "Agency"
+        verbose_name_plural = "Agencies"
 
 
 # Renamed from workcenter
@@ -30,8 +30,8 @@ class Branch(CommonModel):
     """Model Definition for Business Area (Previously Workcenter)"""
 
     old_id = models.IntegerField()
-    entity = models.ForeignKey(
-        "entities.Entity",
+    agency = models.ForeignKey(
+        "agencies.Agency",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -58,8 +58,8 @@ class BusinessArea(CommonModel):
 
     """Model Definition for Business Area (Previously Program)"""
 
-    entity_id = models.ForeignKey(
-        "entities.Entity",
+    agency = models.ForeignKey(
+        "agencies.Agency",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=140)

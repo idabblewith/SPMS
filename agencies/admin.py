@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Entity, Branch, BusinessArea, Division, ResearchFunction
+from .models import Agency, Branch, BusinessArea, Division, ResearchFunction
 
 
-@admin.register(Entity)
-class EntityAdmin(admin.ModelAdmin):
+@admin.register(Agency)
+class AgencyAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "key_stakeholder",

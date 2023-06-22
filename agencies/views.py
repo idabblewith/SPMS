@@ -21,16 +21,16 @@ from django.utils import timezone
 
 import time
 
-from .models import Branch, BusinessArea, Division, Entity, ResearchFunction
+from .models import Branch, BusinessArea, Division, Agency, ResearchFunction
 from .serializers import (
     BranchSerializer,
-    EntitySerializer,
+    AgencySerializer,
     TinyBranchSerializer,
     TinyBusinessAreaSerializer,
     BusinessAreaSerializer,
     TinyDivisionSerializer,
     DivisionSerializer,
-    TinyEntitySerializer,
+    TinyAgencySerializer,
     TinyResearchFunctionSerializer,
     ResearchFunctionSerializer,
 )
@@ -38,12 +38,12 @@ from .serializers import (
 # Using APIView to ensure that we can easily edit and understand the code
 
 
-class Entities(APIView):
+class Agencies(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = Entity.objects.all()
-        ser = TinyEntitySerializer(
+        all = Agency.objects.all()
+        ser = TinyAgencySerializer(
             all,
             many=True,
         )
@@ -53,13 +53,13 @@ class Entities(APIView):
         )
 
     def post(self, req):
-        ser = EntitySerializer(
+        ser = AgencySerializer(
             data=req.data,
         )
         if ser.is_valid():
-            entity = ser.save()
+            Agency = ser.save()
             return Response(
-                TinyEntitySerializer(entity).data,
+                TinyAgencySerializer(Agency).data,
                 status=HTTP_201_CREATED,
             )
         else:
@@ -191,42 +191,42 @@ class ResearchFunctions(APIView):
 # ======================================================================
 
 
-class EntityDetail(APIView):
+class AgencyDetail(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def go(self, pk):
         try:
-            obj = Entity.objects.get(pk=pk)
-        except Entity.DoesNotExist:
+            obj = Agency.objects.get(pk=pk)
+        except Agency.DoesNotExist:
             raise NotFound
         return obj
 
     def get(self, req, pk):
-        entity = self.go(pk)
-        ser = EntitySerializer(entity)
+        Agency = self.go(pk)
+        ser = AgencySerializer(Agency)
         return Response(
             ser.data,
             status=HTTP_200_OK,
         )
 
     def delete(self, req, pk):
-        entity = self.go(pk)
-        entity.delete()
+        Agency = self.go(pk)
+        Agency.delete()
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
     def put(self, req, pk):
-        entity = self.go(pk)
-        ser = EntitySerializer(
-            entity,
+        Agency = self.go(pk)
+        ser = AgencySerializer(
+            Agency,
             data=req.data,
             partial=True,
         )
         if ser.is_valid():
-            updated_entity = ser.save()
+            updated_Agency = ser.save()
             return Response(
-                TinyEntitySerializer(updated_entity).data,
+                TinyAgencySerializer(updated_Agency).data,
                 status=HTTP_202_ACCEPTED,
             )
         else:

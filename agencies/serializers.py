@@ -1,21 +1,21 @@
 from rest_framework import serializers
-from .models import Branch, BusinessArea, Division, Entity, ResearchFunction
+from .models import Branch, BusinessArea, Division, Agency, ResearchFunction
 
 # from users.serializers import TinyUserSerializer
 
 
-class TinyEntitySerializer(serializers.ModelSerializer):
+class TinyAgencySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Entity
+        model = Agency
         fields = (
             "name",
             "key_stakeholder",
         )
 
 
-class EntitySerializer(serializers.ModelSerializer):
+class AgencySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Entity
+        model = Agency
         fields = "__all__"
 
 

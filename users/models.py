@@ -79,14 +79,14 @@ class UserWork(CommonModel):
     )
     # Previously work_center_id
     branch = models.ForeignKey(
-        "entities.Branch",
+        "agencies.Branch",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
     # Previously program_id
     business_area = models.ForeignKey(
-        "entities.BusinessArea",
+        "agencies.BusinessArea",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -123,8 +123,8 @@ class UserProfile(CommonModel):
         on_delete=models.CASCADE,
         related_name="profile",
     )
-    entity = models.ForeignKey(
-        "entities.Entity",
+    agency = models.ForeignKey(
+        "agencies.Agency",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

@@ -3,10 +3,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.forms import model_to_dict
 from django.http import HttpResponse
-from entities.serializers import (
+from agencies.serializers import (
     TinyBranchSerializer,
     TinyBusinessAreaSerializer,
-    TinyEntitySerializer,
+    TinyAgencySerializer,
 )
 
 from users.serializers import TinyUserSerializer
@@ -85,15 +85,15 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     # user_id = TinyUserSerializer
-    # member_of = TinyEntitySerializer
+    # agency = TinyAgencySerializer
 
     list_display = [
         "user_id",
         "about",
-        "entity",
+        "agency",
     ]
 
-    list_filter = ["entity"]
+    list_filter = ["agency"]
 
     search_fields = [
         "name",

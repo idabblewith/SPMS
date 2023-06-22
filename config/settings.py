@@ -116,7 +116,7 @@ THIRD_PARTY_APPS = [
 
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
-    "entities.apps.EntitiesConfig",
+    "agencies.apps.AgenciesConfig",
     "contacts.apps.ContactsConfig",
     "medias.apps.MediasConfig",
     "communications.apps.CommunicationsConfig",

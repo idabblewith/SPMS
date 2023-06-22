@@ -73,7 +73,12 @@ class BaseProject(CommonModel):
         choices=StatusChoices.choices,
         default=StatusChoices.NEW,
     )
+    # agency = models.ForeignKey(
+    #     "agencies.Agency",
+    #     null=True,
+    #     blank=True,
 
+    # )
     effective_from = models.DateField()  # Clarify if these two required
     effective_to = models.DateField()
 

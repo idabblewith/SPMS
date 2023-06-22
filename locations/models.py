@@ -4,7 +4,7 @@ from common.models import CommonModel
 # Create your models here.
 
 
-class DBCARegion(CommonModel):
+class Region(CommonModel):
     """
     Model Definition for Department of Biodiversity, Conservation, and Attractions Regions
 
@@ -41,7 +41,7 @@ class DBCARegion(CommonModel):
         return f"{self.name}"
 
 
-class DBCADistrict(CommonModel):
+class District(CommonModel):
     """
     Model defintion for DBCA Districts
 
@@ -90,6 +90,8 @@ class DBCADistrict(CommonModel):
 class IBRARegion(CommonModel):
     """
     Model definition for IBRA Regions
+    (Interim Biogeographic Regionalisation for Australia)
+
 
     All
     Avon Wheatbelt
@@ -145,6 +147,7 @@ class IBRARegion(CommonModel):
 class IMCRARegion(CommonModel):
     """
     Model definition for IMCRA Regions
+    (Integrated Marine and Coastal Regionalisation of Australia)
 
     All
     Abrolhos Islands
