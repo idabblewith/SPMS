@@ -154,10 +154,9 @@ class UserProfile(CommonModel):
         null=True,
         blank=True,
     )
-    curriculum_vitae = models.FileField(
+    curriculum_vitae = models.TextField(
         null=True,
         blank=True,
-        default=None,
     )
     expertise = models.CharField(
         max_length=140,
