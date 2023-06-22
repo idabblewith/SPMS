@@ -177,7 +177,7 @@ class PublicationsImage(CommonModel):
 class RearPage(CommonModel):
 
     """
-    Model Definition for Rear Page Cover (Provided by Graphic Designers in A4)
+    Model Definition for Rear Page Cover for the year (Provided by Graphic Designers in A4)
     """
 
     file = models.URLField()
@@ -205,7 +205,6 @@ class BusinessAreaPhoto(CommonModel):
     """
 
     file = models.URLField()
-    year = models.DateField()
     business_area = models.ForeignKey(
         "entities.BusinessArea",
         on_delete=models.SET_NULL,
@@ -235,7 +234,6 @@ class UserAvatar(CommonModel):
     """
 
     file = models.URLField()
-    year = models.DateField()
     user = models.ForeignKey(
         "users.User",
         on_delete=models.SET_NULL,

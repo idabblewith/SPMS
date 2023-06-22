@@ -25,7 +25,6 @@ class UserAvatarSerializer(ModelSerializer):
         fields = [
             "pk",
             "file",
-            "year",
             "user",
         ]
 

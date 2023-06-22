@@ -46,8 +46,8 @@ class ProfilePageSerializer(serializers.ModelSerializer):
 
     expertise = serializers.CharField(source="profile.expertise")
     title = serializers.CharField(source="profile.title")
-    about = serializers.CharField(source="profile.profile_text")
-    entity = TinyEntitySerializer(source="profile.member_of")
+    about = serializers.CharField(source="profile.about")
+    entity = TinyEntitySerializer(source="profile.entity")
     branch = serializers.CharField(source="work.branch")
 
     # entity = serializers.CharField(source="work.branch.entity")  # Assuming 'branch' has a foreign key to 'Entity' model

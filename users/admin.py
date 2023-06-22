@@ -89,11 +89,11 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     list_display = [
         "user_id",
-        "profile_text",
-        "member_of",
+        "about",
+        "entity",
     ]
 
-    list_filter = ["member_of"]
+    list_filter = ["entity"]
 
     search_fields = [
         "name",

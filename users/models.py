@@ -123,30 +123,7 @@ class UserProfile(CommonModel):
         on_delete=models.CASCADE,
         related_name="profile",
     )
-    role = models.CharField(
-        max_length=30,
-        default=RoleChoices.EXTERNAL,
-    )
-    title = models.CharField(
-        choices=TitleChoices.choices,
-        max_length=20,
-        null=True,
-        blank=True,
-    )
-    profile_text = models.TextField(
-        null=True,
-        blank=True,
-    )
-    curriculum_vitae = models.FileField(
-        null=True,
-        blank=True,
-    )
-    expertise = models.CharField(
-        max_length=140,
-        null=True,
-        blank=True,
-    )
-    member_of = models.ForeignKey(
+    entity = models.ForeignKey(
         "entities.Entity",
         on_delete=models.SET_NULL,
         null=True,
@@ -158,6 +135,36 @@ class UserProfile(CommonModel):
         null=True,
         on_delete=models.SET_NULL,
     )
+    role = models.CharField(
+        max_length=30,
+        default=RoleChoices.EXTERNAL,
+    )
+    title = models.CharField(
+        choices=TitleChoices.choices,
+        max_length=20,
+        null=True,
+        blank=True,
+    )
+    middle_initials = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+    )
+    about = models.TextField(
+        null=True,
+        blank=True,
+    )
+    curriculum_vitae = models.FileField(
+        null=True,
+        blank=True,
+        default=None,
+    )
+    expertise = models.CharField(
+        max_length=140,
+        null=True,
+        blank=True,
+    )
+
     # is_group,
     # affiliation
 

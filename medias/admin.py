@@ -23,7 +23,6 @@ display_tuple = (
 class UserAvatarAdmin(admin.ModelAdmin):
     list_display = (
         "file",
-        "year",
         "user",
     )
 
@@ -72,7 +71,6 @@ class RearPageAdmin(admin.ModelAdmin):
 class BusinessAreaPhotoAdmin(admin.ModelAdmin):
     list_display = (
         "file",
-        "year",
         "business_area",
         "uploader",
     )
