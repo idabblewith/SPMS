@@ -5,11 +5,21 @@ from .models import Branch, BusinessArea, Division, Agency, ResearchFunction
 
 
 class TinyAgencySerializer(serializers.ModelSerializer):
+    # Get the related image from medias.AgencyImage (as it has reverse accessor/related name of image)
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        agency_image = obj.image.first()
+        if agency_image:
+            return agency_image.file
+        return None
+
     class Meta:
         model = Agency
         fields = (
             "name",
             "key_stakeholder",
+            "image",
         )
 
 

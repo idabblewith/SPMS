@@ -50,6 +50,9 @@ class ProfilePageSerializer(serializers.ModelSerializer):
     agency = TinyAgencySerializer(source="profile.agency")
     branch = serializers.CharField(source="work.branch")
 
+    phone = serializers.CharField(source="contact.phone")
+    fax = serializers.CharField(source="contact.fax")
+
     class Meta:
         model = User
         fields = (
@@ -65,10 +68,12 @@ class ProfilePageSerializer(serializers.ModelSerializer):
             "image",
             "role",
             "expertise",
-            "title",
             "about",
             "agency",
             "branch",
+            "title",
+            "phone",
+            "fax",
         )
 
 
@@ -91,6 +96,7 @@ class PrivateTinyUserSerializer(serializers.ModelSerializer):
 class TinyUserSerializer(serializers.ModelSerializer):
     role = serializers.CharField(source="profile.role")
     branch = serializers.CharField(source="work.branch")
+    image = UserAvatarSerializer(source="profile.image")
 
     class Meta:
         model = User
@@ -102,6 +108,7 @@ class TinyUserSerializer(serializers.ModelSerializer):
             "email",
             "is_superuser",
             "is_staff",
+            "image",
             "role",
             "branch",
         )
