@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from math import ceil
 
 from contacts.models import UserContact
 from .models import User, UserProfile, UserWork
@@ -173,29 +174,42 @@ class Users(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
+        try:
+            page = int(request.query_params.get("page", 1))
+        except ValueError:
+            # If the user sends a non-integer value as the page parameter
+            page = 1
+
+        page_size = settings.PAGE_SIZE
+        start = (page - 1) * page_size
+        end = start + page_size
+
         search_term = request.GET.get("searchTerm")
-        # print(search_term)
+
         if search_term:
             # Apply filtering based on the search term
             users = User.objects.filter(
                 Q(first_name__icontains=search_term)
                 | Q(last_name__icontains=search_term)
                 | Q(email__icontains=search_term)
-                | Q(username__icontains=search_term),
+                | Q(username__icontains=search_term)
             )
         else:
             users = User.objects.all()
 
-        ser = TinyUserSerializer(
-            users,
-            many=True,
-            context={"request": request},
-        )
+        # Sort users alphabetically based on email
+        users = users.order_by("email")
 
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
+        total_users = users.count()
+        total_pages = ceil(total_users / page_size)
+
+        serialized_users = TinyUserSerializer(
+            users[start:end], many=True, context={"request": request}
+        ).data
+
+        response_data = {"users": serialized_users, "total_pages": total_pages}
+
+        return Response(response_data, status=HTTP_200_OK)
 
     def post(self, req):
         ser = PrivateTinyUserSerializer(
