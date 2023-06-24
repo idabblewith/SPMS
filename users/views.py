@@ -186,6 +186,18 @@ class Users(APIView):
 
         search_term = request.GET.get("searchTerm")
 
+        # Get the values of the checkboxes
+        only_superuser = bool(request.GET.get("only_superuser", False))
+        only_staff = bool(request.GET.get("only_staff", False))
+        only_external = bool(request.GET.get("only_external", False))
+
+        # Interaction logic between checkboxes
+        if only_external:
+            only_staff = False
+            only_superuser = False
+        elif only_staff or only_superuser:
+            only_external = False
+
         if search_term:
             # Apply filtering based on the search term
             users = User.objects.filter(
@@ -196,6 +208,14 @@ class Users(APIView):
             )
         else:
             users = User.objects.all()
+
+        # Filter users based on checkbox values
+        if only_external:
+            users = users.filter(is_staff=False)
+        elif only_staff:
+            users = users.filter(is_staff=True)
+        elif only_superuser:
+            users = users.filter(is_superuser=True)
 
         # Sort users alphabetically based on email
         users = users.order_by("email")
