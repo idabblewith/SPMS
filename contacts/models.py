@@ -51,13 +51,29 @@ class UserContact(CommonModel):
         on_delete=models.CASCADE,
         related_name="contact",
     )
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    alt_phone = models.CharField(max_length=20)
-    fax = models.CharField(max_length=20)
+    email = models.EmailField(
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    phone = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+    )
+    alt_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+    )
+    fax = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self) -> str:
-        return f"{self.user_id.username} Contact"
+        return f"{self.user_id} Contact"
 
     class Meta:
         verbose_name = "User Contact"

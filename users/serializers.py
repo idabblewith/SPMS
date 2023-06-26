@@ -42,13 +42,14 @@ class UpdateMembershipSerializer(serializers.ModelSerializer):
 
 class ProfilePageSerializer(serializers.ModelSerializer):
     image = UserAvatarSerializer(source="profile.image")
-    role = serializers.CharField(source="profile.role")
+    role = serializers.CharField(source="work.role")
 
     expertise = serializers.CharField(source="profile.expertise")
     title = serializers.CharField(source="profile.title")
     about = serializers.CharField(source="profile.about")
-    agency = TinyAgencySerializer(source="profile.agency")
+    agency = TinyAgencySerializer(source="work.agency")
     branch = serializers.CharField(source="work.branch")
+    business_area = serializers.CharField(source="work.business_area")
 
     phone = serializers.CharField(source="contact.phone")
     fax = serializers.CharField(source="contact.fax")
@@ -71,6 +72,7 @@ class ProfilePageSerializer(serializers.ModelSerializer):
             "about",
             "agency",
             "branch",
+            "business_area",
             "title",
             "phone",
             "fax",
@@ -94,8 +96,9 @@ class PrivateTinyUserSerializer(serializers.ModelSerializer):
 
 
 class TinyUserSerializer(serializers.ModelSerializer):
-    role = serializers.CharField(source="profile.role")
+    role = serializers.CharField(source="work.role")
     branch = serializers.CharField(source="work.branch")
+    business_area = serializers.CharField(source="work.business_area")
     image = UserAvatarSerializer(source="profile.image")
 
     class Meta:
@@ -111,6 +114,8 @@ class TinyUserSerializer(serializers.ModelSerializer):
             "image",
             "role",
             "branch",
+            "business_area",
+            # affiliation,
         )
 
 

@@ -2,6 +2,20 @@ from django.db import models
 from common.models import CommonModel
 
 
+class Affiliation(CommonModel):
+
+    """Model Definition for Affiliation for external users (Previously defined on UserModel)"""
+
+    name = models.CharField(max_length=250)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Affiliation"
+        verbose_name_plural = "Affiliations"
+
+
 class Agency(CommonModel):
 
     """Model Definition for Agency (Previously defined on UserModel)"""
@@ -112,6 +126,8 @@ class BusinessArea(CommonModel):
         null=True,
         blank=True,
     )
+
+    old_id = models.IntegerField()
 
     focus = models.CharField(
         max_length=1250

@@ -73,6 +73,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
     list_display = [
+        "pk",
         "username",
         "email",
         "first_name",
@@ -84,16 +85,16 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    # user_id = TinyUserSerializer
+    user = TinyUserSerializer
     # agency = TinyAgencySerializer
 
     list_display = [
-        "user_id",
+        "user",
         "about",
-        "agency",
+        # "agency",
     ]
 
-    list_filter = ["agency"]
+    # list_filter = ["agency"]
 
     search_fields = [
         "name",
@@ -102,22 +103,28 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(UserWork)
 class UserWorkAdmin(admin.ModelAdmin):
-    user_id = TinyUserSerializer
-    branch_id = TinyBranchSerializer
-    business_area_id = TinyBusinessAreaSerializer
+    user = TinyUserSerializer
+    # agency = TinyAgencySerializer
+    branch = TinyBranchSerializer
+    business_area = TinyBusinessAreaSerializer
 
     list_display = [
-        "user_id",
-        "branch_id",
-        "business_area_id",
+        "user",
+        "agency",
+        "branch",
+        "business_area",
     ]
 
-    list_filter = ["branch_id", "business_area_id"]
+    list_filter = [
+        "agency",
+        "branch",
+        "business_area",
+    ]
 
     search_fields = [
-        "business_area_id",
-        "user_id",
-        "branch_id",
+        "business_area__name",
+        "user__name",
+        "branch__name",
     ]
 
     # """Custom UserAdmin."""

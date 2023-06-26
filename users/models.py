@@ -71,11 +71,26 @@ class User(AbstractUser):
 
 
 class UserWork(CommonModel):
+    class RoleChoices(models.TextChoices):
+        ECODEV = "Ecoinformatics Developer", "Ecoinformatics Developer"
+        EXECDIR = "Executive Director", "Executive Director"
+        ASSEXECDIR = "Assistant Executive Director", "Assistant Executive Director"
+        BALEAD = "Business Area Leader", "Business Area Leader"
+        ADMIN = "Admin", "Admin"
+        DBCA = "DBCA Member", "DBCA Member"
+        NONE = "None", "None"
+
     user = models.OneToOneField(
         "users.User",
         unique=True,
         on_delete=models.CASCADE,
         related_name="work",
+    )
+    agency = models.ForeignKey(
+        "agencies.Agency",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     # Previously work_center_id
     branch = models.ForeignKey(
@@ -90,6 +105,19 @@ class UserWork(CommonModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+    )
+
+    affiliation = models.ForeignKey(
+        "agencies.Affiliation",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    role = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        default=RoleChoices.NONE,
     )
 
     def __str__(self) -> str:
@@ -108,36 +136,17 @@ class UserProfile(CommonModel):
         MAS = "master", "Master"
         DR = "dr", "Dr."
 
-    class RoleChoices(models.TextChoices):
-        ECODEV = "Ecoinformatics Developer", "Ecoinformatics Developer"
-        EXECDIR = "Executive Director", "Executive Director"
-        ASSEXECDIR = "Assistant Executive Director", "Assistant Executive Director"
-        BALEAD = "Business Area Leader", "Business Area Leader"
-        ADMIN = "Admin", "Admin"
-        DBCA = "DBCA Member", "DBCA Member"
-        EXTERNAL = "External User", "External User"
-
     user = models.OneToOneField(
         "users.User",
         unique=True,
         on_delete=models.CASCADE,
         related_name="profile",
     )
-    agency = models.ForeignKey(
-        "agencies.Agency",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
     image = models.ForeignKey(
         "medias.UserAvatar",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-    )
-    role = models.CharField(
-        max_length=30,
-        default=RoleChoices.EXTERNAL,
     )
     title = models.CharField(
         choices=TitleChoices.choices,
