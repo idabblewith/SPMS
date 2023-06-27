@@ -75,11 +75,11 @@ class ResearchFunctionAdmin(admin.ModelAdmin):
         "name",
         "description",
         "leader",
-        "active",
+        "is_active",
     ]
 
     list_filter = [
-        "active",
+        "is_active",
         "leader",
     ]
 

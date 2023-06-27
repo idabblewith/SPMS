@@ -89,6 +89,7 @@ class TinyResearchFunctionSerializer(ModelSerializer):
             "description",
             "leader",
             "association",
+            "is_active",
         )
 
 

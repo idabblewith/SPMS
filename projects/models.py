@@ -15,7 +15,7 @@ class ResearchFunction(CommonModel):
 
     name = models.CharField(max_length=150)
     description = models.TextField(
-        null=False,
+        null=True,
         blank=True,
     )
     association = models.TextField(
@@ -32,10 +32,11 @@ class ResearchFunction(CommonModel):
         verbose_name="Function Leader",
         help_text="The scientist in charge of the Research Function",
     )
-    active = models.BooleanField(
-        default=True,
+    is_active = models.BooleanField(
+        default=False,
         help_text="Whether this research function has been deprecated or not.",
     )
+    old_id = models.IntegerField()
 
     def __str__(self) -> str:
         return f"{self.name}"
