@@ -8,6 +8,8 @@ urlpatterns = [
     path("branches/<int:pk>", views.BranchDetail.as_view()),
     path("business_areas", views.BusinessAreas.as_view()),
     path("business_areas/<int:pk>", views.BusinessAreaDetail.as_view()),
-    path("divisions", views.Divisions.as_view()),
-    path("divisions/<int:pk>", views.DivisionDetail.as_view()),
+    # path("divisions", views.Divisions.as_view()),
+    # path("divisions/<int:pk>", views.DivisionDetail.as_view()),
+    path("departmental_services", views.DepartmentalServices.as_view()),
+    path("departmental_services/<int:pk>", views.DepartmentalServiceDetail.as_view()),
 ]

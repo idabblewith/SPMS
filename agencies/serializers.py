@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Branch, BusinessArea, Division, Agency
+from .models import Branch, BusinessArea, DepartmentalService, Agency
 
 # from users.serializers import TinyUserSerializer
 
@@ -72,25 +72,45 @@ class BusinessAreaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TinyDivisionSerializer(serializers.ModelSerializer):
-    # director = TinyUserSerializer()
-    # approver = TinyUserSerializer()
+# class TinyDivisionSerializer(serializers.ModelSerializer):
+#     # director = TinyUserSerializer()
+#     # approver = TinyUserSerializer()
+
+#     class Meta:
+#         model = Division
+#         fields = (
+#             "name",
+#             "slug",
+#             "director",
+#             "approver",
+#         )
+
+
+# class DivisionSerializer(serializers.ModelSerializer):
+#     # creator = TinyUserSerializer(read_only=True)
+#     # director = TinyUserSerializer()
+#     # approver = TinyUserSerializer()  # read_only=True
+
+#     class Meta:
+#         model = Division
+#         fields = "__all__"
+
+
+class TinyDepartmentalServiceSerializer(serializers.ModelSerializer):
+    # director = serializers.SerializerMethodField()
+
+    # def get_director(self, obj):
+    #     d = obj.image.first()
+    #     if d:
+    #         return d
+    #     return None
 
     class Meta:
-        model = Division
-        fields = (
-            "name",
-            "slug",
-            "director",
-            "approver",
-        )
+        model = DepartmentalService
+        fields = ("name", "director")
 
 
-class DivisionSerializer(serializers.ModelSerializer):
-    # creator = TinyUserSerializer(read_only=True)
-    # director = TinyUserSerializer()
-    # approver = TinyUserSerializer()  # read_only=True
-
+class DepartmentalServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Division
+        model = DepartmentalService
         fields = "__all__"

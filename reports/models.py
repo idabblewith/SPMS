@@ -30,7 +30,7 @@ class ARARReport(CommonModel):
     )
 
     divisions = models.ForeignKey(
-        "agencies.Division",
+        "agencies.DepartmentalService",  # CHANGED FROM DIVISIONS
         on_delete=models.SET_NULL,
         blank=True,
         null=True,

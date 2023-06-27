@@ -159,43 +159,76 @@ class BusinessArea(CommonModel):
     # cost_center = models.ForeignKey()
 
 
-class Division(CommonModel):
-    """
-    The primary departments which projects/research functions belong to.
-    ARAR Projects are separated into blocks/fields - these are departments.
+# class Division(CommonModel):
+#     """
+#     The primary departments which projects/research functions belong to.
+#     ARAR Projects are separated into blocks/fields - these are departments.
 
-    These Divisions are the organizational units of the Department.
-    Each Division has an Executive Director, who is the approver of all Divisional projects.
-    Each Divisional Program belongs to exactly one Division.
+#     These Divisions are the organizational units of the Department.
+#     Each Division has an Executive Director, who is the approver of all Divisional projects.
+#     Each Divisional Program belongs to exactly one Division.
+#     """
+
+#     name = models.CharField(max_length=150)
+#     slug = models.SlugField(
+#         help_text="A URL-sage acronym of the Division's name without whitespace",
+#     )
+#     director = models.ForeignKey(
+#         "users.User",
+#         on_delete=models.SET_NULL,  # CONFIRM
+#         blank=True,
+#         null=True,
+#         related_name="divisions_led",
+#         help_text="The Division's director is attributed as head of the Division in reports",
+#     )
+#     approver = models.ForeignKey(
+#         "users.User",
+#         on_delete=models.SET_NULL,
+#         blank=True,
+#         null=True,
+#         related_name="divisions_approved",
+#         help_text="The Approver receives notifications about outstanding requests and has permission \
+#             to approve documents. The approver can be anyone in a supervisory role, including the Director.",
+#     )
+#     old_id = models.IntegerField()
+#     old_director_id = models.IntegerField()
+
+#     def __str__(self) -> str:
+#         return f"{self.name}"
+
+#     class Meta:
+#         verbose_name = "Derpartment Division"
+#         verbose_name_plural = "Department Divisions"
+
+
+class DepartmentalService(CommonModel):
+    """Departmental services.
+
+    SPMS Science projects provide value to a defined selection of the Departmental Services.
     """
 
-    name = models.CharField(max_length=150)
-    slug = models.SlugField(
-        help_text="A URL-sage acronym of the Division's name without whitespace",
-    )
+    name = models.CharField(max_length=320)
+    # slug = models.SlugField(
+    #     help_text="A URL-safe acronym of the Service's name without whitespace."
+    # )
     director = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,  # CONFIRM
-        blank=True,
-        null=True,
-        related_name="divisions_led",
-        help_text="The Division's director is attributed as head of the Division in reports",
-    )
-    approver = models.ForeignKey(
         "users.User",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name="divisions_approved",
-        help_text="The Approver receives notifications about outstanding requests and has permission \
-            to approve documents. The approver can be anyone in a supervisory role, including the Director.",
+        related_name="services_led",
+        help_text="The Service's Director",
     )
     old_id = models.IntegerField()
     old_director_id = models.IntegerField()
 
-    def __str__(self) -> str:
-        return f"{self.name}"
-
     class Meta:
-        verbose_name = "Derpartment Division"
-        verbose_name_plural = "Department Divisions"
+        """Class opts."""
+
+        verbose_name = "Departmental Service"
+        verbose_name_plural = "Departmental Services"
+        # ordering = ['slug', 'name']
+
+    def __str__(self):
+        """String representation."""
+        return f"Service {self.slug} {self.name}"

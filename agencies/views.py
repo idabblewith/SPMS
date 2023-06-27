@@ -21,15 +21,15 @@ from django.utils import timezone
 
 import time
 
-from .models import Branch, BusinessArea, Division, Agency
+from .models import Branch, BusinessArea, DepartmentalService, Agency
 from .serializers import (
     BranchSerializer,
     AgencySerializer,
+    DepartmentalServiceSerializer,
     TinyBranchSerializer,
     TinyBusinessAreaSerializer,
     BusinessAreaSerializer,
-    TinyDivisionSerializer,
-    DivisionSerializer,
+    TinyDepartmentalServiceSerializer,
     TinyAgencySerializer,
 )
 
@@ -129,10 +129,39 @@ class BusinessAreas(APIView):
             )
 
 
-class Divisions(APIView):
+# class Divisions(APIView):
+#     def get(self, req):
+#         all = Division.objects.all()
+#         ser = TinyDivisionSerializer(
+#             all,
+#             many=True,
+#         )
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+
+#     def post(self, req):
+#         ser = DivisionSerializer(
+#             data=req.data,
+#         )
+#         if ser.is_valid():
+#             div = ser.save()
+#             return Response(
+#                 TinyDivisionSerializer(div).data,
+#                 status=HTTP_201_CREATED,
+#             )
+#         else:
+#             return Response(
+#                 ser.errors,
+#                 status=HTTP_400_BAD_REQUEST,
+#             )
+
+
+class DepartmentalServices(APIView):
     def get(self, req):
-        all = Division.objects.all()
-        ser = TinyDivisionSerializer(
+        all = DepartmentalService.objects.all()
+        ser = TinyDepartmentalServiceSerializer(
             all,
             many=True,
         )
@@ -142,13 +171,13 @@ class Divisions(APIView):
         )
 
     def post(self, req):
-        ser = DivisionSerializer(
+        ser = DepartmentalServiceSerializer(
             data=req.data,
         )
         if ser.is_valid():
-            div = ser.save()
+            service = ser.save()
             return Response(
-                TinyDivisionSerializer(div).data,
+                TinyDepartmentalServiceSerializer(service).data,
                 status=HTTP_201_CREATED,
             )
         else:
@@ -296,40 +325,83 @@ class BusinessAreaDetail(APIView):
             )
 
 
-class DivisionDetail(APIView):
+# class DivisionDetail(APIView):
+#     def go(self, req, pk):
+#         try:
+#             obj = Division.objects.get(pk=pk)
+#         except Division.DoesNotExist:
+#             raise NotFound
+#         return obj
+
+#     def get(self, req, pk):
+#         div = self.go(pk)
+#         ser = DivisionSerializer(div)
+#         return Response(
+#             ser.data,
+#             status=HTTP_200_OK,
+#         )
+
+#     def delete(self, req, pk):
+#         div = self.go(pk)
+#         div.delete()
+#         return Response(
+#             status=HTTP_204_NO_CONTENT,
+#         )
+
+#     def put(self, req, pk):
+#         div = self.go(pk)
+#         ser = DivisionSerializer(
+#             div,
+#             data=req.data,
+#             partial=True,
+#         )
+#         if ser.is_valid():
+#             udiv = ser.save()
+#             return Response(
+#                 TinyDivisionSerializer(udiv).data,
+#                 status=HTTP_202_ACCEPTED,
+#             )
+#         else:
+#             return Response(
+#                 ser.errors,
+#                 status=HTTP_400_BAD_REQUEST,
+#             )
+
+
+class DepartmentalServiceDetail(APIView):
     def go(self, req, pk):
         try:
-            obj = Division.objects.get(pk=pk)
-        except Division.DoesNotExist:
+            obj = DepartmentalService.objects.get(pk=pk)
+        except DepartmentalService.DoesNotExist:
             raise NotFound
         return obj
 
     def get(self, req, pk):
-        div = self.go(pk)
-        ser = DivisionSerializer(div)
+        service = self.go(pk)
+        ser = DepartmentalServiceSerializer(service)
         return Response(
             ser.data,
             status=HTTP_200_OK,
         )
 
     def delete(self, req, pk):
-        div = self.go(pk)
-        div.delete()
+        service = self.go(pk)
+        service.delete()
         return Response(
             status=HTTP_204_NO_CONTENT,
         )
 
     def put(self, req, pk):
-        div = self.go(pk)
-        ser = DivisionSerializer(
-            div,
+        service = self.go(pk)
+        ser = DepartmentalServiceSerializer(
+            service,
             data=req.data,
             partial=True,
         )
         if ser.is_valid():
-            udiv = ser.save()
+            uservice = ser.save()
             return Response(
-                TinyDivisionSerializer(udiv).data,
+                TinyDepartmentalServiceSerializer(uservice).data,
                 status=HTTP_202_ACCEPTED,
             )
         else:
