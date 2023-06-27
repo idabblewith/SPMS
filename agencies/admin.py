@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Agency, Branch, BusinessArea, Division, ResearchFunction
+from .models import Agency, Branch, BusinessArea, Division
 
 
 @admin.register(Agency)
@@ -60,23 +60,3 @@ class DivisionAdmin(admin.ModelAdmin):
     ]
 
     search_fields = ["name"]
-
-
-@admin.register(ResearchFunction)
-class ResearchFunctionAdmin(admin.ModelAdmin):
-    list_display = [
-        "name",
-        "description",
-        "leader",
-        "active",
-    ]
-
-    list_filter = [
-        "active",
-        "leader",
-    ]
-
-    search_fields = [
-        "name",
-        "description",
-    ]

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Branch, BusinessArea, Division, Agency, ResearchFunction
+from .models import Branch, BusinessArea, Division, Agency
 
 # from users.serializers import TinyUserSerializer
 
@@ -93,26 +93,4 @@ class DivisionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Division
-        fields = "__all__"
-
-
-class TinyResearchFunctionSerializer(serializers.ModelSerializer):
-    # leader = TinyUserSerializer()
-
-    class Meta:
-        model = ResearchFunction
-        fields = (
-            "name",
-            "description",
-            "leader",
-            "association",
-        )
-
-
-class ResearchFunctionSerializer(serializers.ModelSerializer):
-    # creator = TinyUserSerializer(read_only=True)
-    # leader = TinyUserSerializer()
-
-    class Meta:
-        model = ResearchFunction
         fields = "__all__"

@@ -1,8 +1,52 @@
 from django.db import models
 from common.models import CommonModel
 
+
 # ------------------------------
-# Section: Abstract Models
+# Section: Research Function Model
+# ------------------------------
+
+
+class ResearchFunction(CommonModel):
+    """
+    Research functions categorise projects in the ARAR;
+
+    """
+
+    name = models.CharField(max_length=150)
+    description = models.TextField(
+        null=False,
+        blank=True,
+    )
+    association = models.TextField(
+        null=True,
+        blank=True,
+        help_text="The research function's association with departmental programs/divisions.",
+    )
+    leader = models.ForeignKey(
+        "users.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,  # Double check policy
+        related_name="research_functions_led",
+        verbose_name="Function Leader",
+        help_text="The scientist in charge of the Research Function",
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text="Whether this research function has been deprecated or not.",
+    )
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Research Function"
+        verbose_name_plural = "Research Functions"
+
+
+# ------------------------------
+# Section: Abstract Project Models
 # ------------------------------
 
 

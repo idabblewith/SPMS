@@ -232,10 +232,12 @@ class Users(APIView):
         return Response(response_data, status=HTTP_200_OK)
 
     def post(self, req):
+        print(req.data)
         ser = PrivateTinyUserSerializer(
             data=req.data,
         )
         if ser.is_valid():
+            # print("Serializer legit")
             try:
                 # Ensures everything is rolled back if there is an error.
                 with transaction.atomic():
@@ -249,7 +251,7 @@ class Users(APIView):
                     # Creates UserProfile entry
                     UserProfile.objects.create(user=new_user)
                     # Creates UserContact entry
-                    UserContact.objects.create(user_id=new_user)
+                    UserContact.objects.create(user=new_user)
 
                     new_user.set_password(settings.EXTERNAL_PASS)
                     new_user.save()
@@ -260,6 +262,7 @@ class Users(APIView):
                         status=HTTP_201_CREATED,
                     )
             except Exception as e:
+                # print("exxxxxxxxx")
                 print(e)
                 raise ParseError(e)
         else:

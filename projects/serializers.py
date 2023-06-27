@@ -1,4 +1,10 @@
-from .models import ScienceProject, StudentProject, ExternalProject, CoreFunctionProject
+from .models import (
+    ScienceProject,
+    StudentProject,
+    ExternalProject,
+    CoreFunctionProject,
+    ResearchFunction,
+)
 from rest_framework.serializers import ModelSerializer
 
 
@@ -71,3 +77,25 @@ class TinyCoreFunctionProjectSerializer(ModelSerializer):
         "active",
         "status",
     ]
+
+
+class TinyResearchFunctionSerializer(ModelSerializer):
+    # leader = TinyUserSerializer()
+
+    class Meta:
+        model = ResearchFunction
+        fields = (
+            "name",
+            "description",
+            "leader",
+            "association",
+        )
+
+
+class ResearchFunctionSerializer(ModelSerializer):
+    # creator = TinyUserSerializer(read_only=True)
+    # leader = TinyUserSerializer()
+
+    class Meta:
+        model = ResearchFunction
+        fields = "__all__"

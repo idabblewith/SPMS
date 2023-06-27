@@ -11,4 +11,6 @@ urlpatterns = [
     path("science/<int:pk>", views.ScienceProjectDetail.as_view()),
     path("core_function", views.CoreFunctionProjects.as_view()),
     path("core_function/<int:pk>", views.CoreFunctionProjectDetail.as_view()),
+    path("research_functions", views.ResearchFunctions.as_view()),
+    path("research_functions/<int:pk>", views.ResearchFunctionDetail.as_view()),
 ]

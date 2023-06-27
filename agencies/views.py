@@ -21,7 +21,7 @@ from django.utils import timezone
 
 import time
 
-from .models import Branch, BusinessArea, Division, Agency, ResearchFunction
+from .models import Branch, BusinessArea, Division, Agency
 from .serializers import (
     BranchSerializer,
     AgencySerializer,
@@ -31,8 +31,6 @@ from .serializers import (
     TinyDivisionSerializer,
     DivisionSerializer,
     TinyAgencySerializer,
-    TinyResearchFunctionSerializer,
-    ResearchFunctionSerializer,
 )
 
 # Using APIView to ensure that we can easily edit and understand the code
@@ -157,34 +155,6 @@ class Divisions(APIView):
             return Response(
                 ser.errors,
                 status=HTTP_400_BAD_REQUEST,
-            )
-
-
-class ResearchFunctions(APIView):
-    def get(self, req):
-        all = ResearchFunction.objects.all()
-        ser = TinyResearchFunctionSerializer(
-            all,
-            many=True,
-        )
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def post(self, req):
-        ser = ResearchFunctionSerializer(
-            data=req.data,
-        )
-        if ser.is_valid():
-            rf = ser.save()
-            return Response(
-                TinyResearchFunctionSerializer(rf).data,
-                status=HTTP_201_CREATED,
-            )
-        else:
-            return Response(
-                HTTP_400_BAD_REQUEST,
             )
 
 
@@ -360,49 +330,6 @@ class DivisionDetail(APIView):
             udiv = ser.save()
             return Response(
                 TinyDivisionSerializer(udiv).data,
-                status=HTTP_202_ACCEPTED,
-            )
-        else:
-            return Response(
-                ser.errors,
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-
-class ResearchFunctionDetail(APIView):
-    def go(self, req, pk):
-        try:
-            obj = ResearchFunction.objects.get(pk=pk)
-        except ResearchFunction.DoesNotExist:
-            raise NotFound
-        return obj
-
-    def get(self, req, pk):
-        rf = self.go(pk)
-        ser = ResearchFunctionSerializer(rf)
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
-
-    def delete(self, req, pk):
-        rf = self.go(pk)
-        rf.delete()
-        return Response(
-            status=HTTP_204_NO_CONTENT,
-        )
-
-    def put(self, req, pk):
-        rf = self.go(pk)
-        ser = ResearchFunctionSerializer(
-            rf,
-            data=req.data,
-            partial=True,
-        )
-        if ser.is_valid():
-            urf = ser.save()
-            return Response(
-                TinyResearchFunctionSerializer(urf).data,
                 status=HTTP_202_ACCEPTED,
             )
         else:

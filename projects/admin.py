@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import ScienceProject, StudentProject, ExternalProject, CoreFunctionProject
+from .models import (
+    ScienceProject,
+    StudentProject,
+    ExternalProject,
+    CoreFunctionProject,
+    ResearchFunction,
+)
 from categories.serializers import ProjectCategorySerializer
 
 
@@ -61,3 +67,23 @@ class CoreFunctionProjectAdmin(admin.ModelAdmin):
         # "created_at",
         # "updated_at",
     )
+
+
+@admin.register(ResearchFunction)
+class ResearchFunctionAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "description",
+        "leader",
+        "active",
+    ]
+
+    list_filter = [
+        "active",
+        "leader",
+    ]
+
+    search_fields = [
+        "name",
+        "description",
+    ]
