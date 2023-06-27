@@ -125,6 +125,7 @@ CUSTOM_APPS = [
     "categories.apps.CategoriesConfig",
     "reports.apps.ReportsConfig",
     "quotes.apps.QuotesConfig",
+    "locations.apps.LocationsConfig",
 ]
 
 
@@ -166,3 +167,7 @@ REST_FRAMEWORK = {
         # "config.authentication.JWTAuthentication",
     ],
 }
+
+
+# GIS STUFF
+# GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
