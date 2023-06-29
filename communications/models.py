@@ -36,35 +36,13 @@ class Comment(CommonModel):
         blank=True,
         null=True,
     )
-    science_project = models.ForeignKey(
-        "projects.ScienceProject",
+    project = models.ForeignKey(
+        "projects.Project",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
         related_name="comments",
     )
-    core_function_project = models.ForeignKey(
-        "projects.CoreFunctionProject",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="comments",
-    )
-    student_project = models.ForeignKey(
-        "projects.StudentProject",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="comments",
-    )
-    external_project = models.ForeignKey(
-        "projects.ExternalProject",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="comments",
-    )
-
     text = models.CharField(max_length=500)
     ip_address = models.CharField(
         max_length=45,

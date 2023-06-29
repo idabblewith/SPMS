@@ -228,6 +228,35 @@ class BusinessAreaPhoto(CommonModel):
         verbose_name_plural = "Business Area Images"
 
 
+class ProjectPhoto(CommonModel):
+    """
+    Model Definition for Project Photos
+    """
+
+    file = models.URLField()
+    project = models.ForeignKey(
+        "projects.Project",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="image",
+    )
+    uploader = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="project_photos_uploaded",
+    )
+
+    def __str__(self) -> str:
+        return "Project Photo File"
+
+    class Meta:
+        verbose_name = "Project Image"
+        verbose_name_plural = "Project Images"
+
+
 class AgencyImage(CommonModel):
     """
     Model Definition for Agency Photos (DBCA's image)

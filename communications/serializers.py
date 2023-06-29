@@ -42,10 +42,7 @@ class TinyCommentSerializer(ModelSerializer):
             "user",
             "category",
             "text",
-            "science_project",
-            "student_project",
-            "external_project",
-            "core_function_project",
+            "project",
         ]
 
 

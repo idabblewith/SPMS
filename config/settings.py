@@ -111,21 +111,23 @@ SYSTEM_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+    # "rest_framework_gis",
+    # "leaflet",
     "corsheaders",
 ]
 
 CUSTOM_APPS = [
+    "quotes.apps.QuotesConfig",
+    "common.apps.CommonConfig",
     "users.apps.UsersConfig",
-    "agencies.apps.AgenciesConfig",
     "contacts.apps.ContactsConfig",
     "medias.apps.MediasConfig",
-    "communications.apps.CommunicationsConfig",
-    "common.apps.CommonConfig",
-    "projects.apps.ProjectsConfig",
+    "agencies.apps.AgenciesConfig",
     "categories.apps.CategoriesConfig",
-    "reports.apps.ReportsConfig",
-    "quotes.apps.QuotesConfig",
     "locations.apps.LocationsConfig",
+    "projects.apps.ProjectsConfig",
+    "reports.apps.ReportsConfig",
+    "communications.apps.CommunicationsConfig",
 ]
 
 
@@ -170,4 +172,4 @@ REST_FRAMEWORK = {
 
 
 # GIS STUFF
-# GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
+# GDAL_LIBRARY_PATH = "./gdal"

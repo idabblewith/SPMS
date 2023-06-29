@@ -32,7 +32,7 @@ urlpatterns = [
     path("api/v1/projects/", include("projects.urls")),
     # path("api/v1/documents/", include("documents.urls")),
     path("api/v1/quotes/", include("quotes.urls")),
-    # path("api/v1/locations/", include("locations.urls")),
+    path("api/v1/locations/", include("locations.urls")),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT,

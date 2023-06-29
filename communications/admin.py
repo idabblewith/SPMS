@@ -31,6 +31,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "category",
+        "project",
         "text",
         "created_at",
         "is_public",
