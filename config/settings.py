@@ -3,6 +3,8 @@ import os
 import environ
 from datetime import timedelta
 import dj_database_url
+from dj_database_url import DBConfig
+
 
 env = environ.Env()
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,11 +90,33 @@ PAGE_SIZE = 10
 USER_LIST_PAGE_SIZE = 250
 
 
+# # Get the default database configuration from the URL
+# default_db_config = dj_database_url.config(
+#     default=f"postgresql://{env('PGUSER')}:{env('PGPASS')}@{env('HOST')}:{env('PORT')}/{env('DBNAME')}",
+#     conn_max_age=600,
+# )
+
+# # Set the client encoding option
+# default_db_config["OPTIONS"] = {"options": "-c client_encoding=utf8"}
+
+# # Update the DATABASES settings
+# DATABASES = {
+#     "default": default_db_config,
+# }
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"postgresql://{env('PGUSER')}:{env('PGPASS')}@{env('HOST')}:{env('PORT')}/{env('DBNAME')}",
-        conn_max_age=600,
-    ),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": f"{env('DBNAME')}",
+        "USER": f"{env('PGUSER')}",
+        "PASSWORD": f"{env('PGPASS')}",
+        "HOST": f"{env('HOST')}",
+        "PORT": f"{env('PORT')}",
+        "OPTIONS": {
+            "options": "-c client_encoding=utf8",
+        },
+        "CONN_MAX_AGE": 600,
+    }
 }
 
 AUTH_USER_MODEL = "users.User"
