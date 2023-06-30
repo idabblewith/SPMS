@@ -83,6 +83,19 @@ class ProjectAdmin(admin.ModelAdmin):
         "business_area",
     ]
 
+    search_fields = [
+        "title",
+        "tagline",
+        "description",
+    ]
+
+    list_filter = [
+        "kind",
+        "status",
+        "year",
+        "business_area",
+    ]
+
 
 @admin.register(ResearchFunction)
 class ResearchFunctionAdmin(admin.ModelAdmin):
