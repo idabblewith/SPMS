@@ -46,17 +46,6 @@ class ResearchFunction(CommonModel):
     def __str__(self) -> str:
         return f"{self.name}"
 
-    # ------------------------------
-    # Section: Abstract Project Models
-    # ------------------------------
-
-    # class BaseProjectWithStartDate(BaseProject):
-    # start_date = models.DateField()
-    # end_date = models.DateField()
-
-    # class Meta:
-    #     abstract = True
-
 
 # ------------------------------
 # Section: Project Models
@@ -100,8 +89,6 @@ class Project(CommonModel):
     old_id = models.IntegerField()
     kind = models.CharField(
         choices=CategoryKindChoices.choices,
-        # "categories.ProjectCategory",
-        # on_delete=models.SET_NULL,
         blank=True,
         null=True,
         help_text="The project type determines the approval and \
@@ -128,6 +115,7 @@ class Project(CommonModel):
 
     title = models.CharField(
         max_length=500,
+        unique=True,
     )
 
     description = models.TextField(
@@ -135,9 +123,15 @@ class Project(CommonModel):
         blank=True,
     )
 
-    tagline = models.CharField(max_length=500)
+    tagline = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+    )
     keywords = models.CharField(
-        max_length=500
+        max_length=500,
+        blank=True,
+        null=True,
     )  # will extract as semicolon seperated values like linkedin skills
 
     start_date = models.DateField(
@@ -165,11 +159,116 @@ class Project(CommonModel):
     #     #  related_name='business'
     # )
 
-    # class Meta:
-    #     abstract = True
-
     def __str__(self) -> str:
-        return f"{self.kind} {self.title}"
+        return f"({self.kind.upper()}) {self.title}"
+
+
+class ProjectDetails(models.Model):
+    project = models.ForeignKey(
+        "projects.Project",
+        related_name="details",
+        on_delete=models.CASCADE,
+    )
+    creator = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        related_name="projects_created",
+        blank=True,
+        null=True,
+    )
+    modifier = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        related_name="projects_modified",
+        blank=True,
+        null=True,
+    )
+    owner = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        related_name="projects_owned",
+        null=True,
+    )
+    data_custodian = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        related_name="projects_where_data_custodian",
+        blank=True,
+        null=True,
+    )
+    site_custodian = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        related_name="projects_where_site_custodian",
+        blank=True,
+        null=True,
+    )
+
+    research_function = models.ForeignKey(
+        "projects.ResearchFunction",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    team_list = models.ManyToManyField(
+        "users.User",
+        related_name="projects_teammember",
+        # blank=True,
+        # null=True,
+    )
+    supervising_scientist_list = models.ManyToManyField(
+        "users.User",
+        related_name="projects_as_supervising_scientist",
+    )
+    area_list = models.ManyToManyField(
+        "locations.Area",
+        related_name="projects_location",
+    )
+    # output_program =
+
+    pass
+
+
+class ProjectAreas(models.Model):
+    pass
+
+
+class ProjectMembers(models.Model):
+    pass
+
+
+# Science Project CSV has no extra data
+# Core Function Project has no extra data
+# Student Project CSV has extra data: level, organisation, student_list_plain, academic_list_plain, academic_list_plain_no_affiliation
+# Collaboration Project CSV has extra data: name, budget, staff_list, aims, description
+
+
+class StudentProjectDetails(models.Model):
+    pass
+
+
+class ExternalProjectDetails(models.Model):
+    pass
+    # collaboration_with = models.CharField(
+    #     max_length=300,
+    # )
+    # staff_list =
+    # # renamed from 'name'
+    # budget = models.CharField(
+    #     max_length=250,
+    #     null=True,
+    #     blank=True,
+    # )
+    # description = models.CharField(
+    #     max_length=500,
+    #     null=True,
+    #     blank=True,
+    # )
+    # aims = models.CharField(
+    #     max_length=500,
+    #     null=True,
+    #     blank=True,
+    # )
 
 
 # class ProjectDetails(CommonModel):

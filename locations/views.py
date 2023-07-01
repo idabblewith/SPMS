@@ -21,10 +21,10 @@ from django.utils import timezone
 
 import time
 
-from .models import ProjectArea
+from .models import Area
 from .serializers import (
-    TinyProjectAreaSerializer,
-    ProjectAreaSerializer,
+    TinyAreaSerializer,
+    AreaSerializer,
 )
 
 # Using APIView to ensure that we can easily edit and understand the code
@@ -37,8 +37,8 @@ class DBCADistricts(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = ProjectArea.objects.filter(area_type="dbcadistrict").all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.filter(area_type="dbcadistrict").all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -52,8 +52,8 @@ class DBCARegions(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = ProjectArea.objects.filter(area_type="dbcaregion").all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.filter(area_type="dbcaregion").all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -67,8 +67,8 @@ class Imcras(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = ProjectArea.objects.filter(area_type="imcra").all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.filter(area_type="imcra").all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -82,8 +82,8 @@ class Ibras(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = ProjectArea.objects.filter(area_type="ibra").all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.filter(area_type="ibra").all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -97,8 +97,8 @@ class Nrms(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, req):
-        all = ProjectArea.objects.filter(area_type="nrm").all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.filter(area_type="nrm").all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -111,10 +111,10 @@ class Nrms(APIView):
 # MAIN ======================================================================
 
 
-class ProjectAreas(APIView):
+class Areas(APIView):
     def get(self, req):
-        all = ProjectArea.objects.all()
-        ser = TinyProjectAreaSerializer(
+        all = Area.objects.all()
+        ser = TinyAreaSerializer(
             all,
             many=True,
         )
@@ -124,13 +124,13 @@ class ProjectAreas(APIView):
         )
 
     def post(self, req):
-        ser = ProjectAreaSerializer(
+        ser = AreaSerializer(
             data=req.data,
         )
         if ser.is_valid():
             area = ser.save()
             return Response(
-                TinyProjectAreaSerializer(area).data,
+                TinyAreaSerializer(area).data,
                 status=HTTP_201_CREATED,
             )
         else:
@@ -140,19 +140,19 @@ class ProjectAreas(APIView):
             )
 
 
-class ProjectAreaDetail(APIView):
+class AreaDetail(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def go(self, pk):
         try:
-            obj = ProjectArea.objects.get(pk=pk)
-        except ProjectArea.DoesNotExist:
+            obj = Area.objects.get(pk=pk)
+        except Area.DoesNotExist:
             raise NotFound
         return obj
 
     def get(self, req, pk):
         area = self.go(pk)
-        ser = ProjectAreaSerializer(area)
+        ser = AreaSerializer(area)
         return Response(
             ser.data,
             status=HTTP_200_OK,
@@ -167,7 +167,7 @@ class ProjectAreaDetail(APIView):
 
     def put(self, req, pk):
         area = self.go(pk)
-        ser = ProjectAreaSerializer(
+        ser = AreaSerializer(
             area,
             data=req.data,
             partial=True,
@@ -175,7 +175,7 @@ class ProjectAreaDetail(APIView):
         if ser.is_valid():
             updated_area = ser.save()
             return Response(
-                TinyProjectAreaSerializer(updated_area).data,
+                TinyAreaSerializer(updated_area).data,
                 status=HTTP_202_ACCEPTED,
             )
         else:

@@ -1,11 +1,11 @@
 from rest_framework.serializers import ModelSerializer, IntegerField, CharField
-from .models import ProjectArea
+from .models import Area
 
 
-class TinyProjectAreaSerializer(ModelSerializer):
+class TinyAreaSerializer(ModelSerializer):
     # user = TinyUserSerializer()
     class Meta:
-        model = ProjectArea
+        model = Area
         fields = [
             "pk",
             "name",
@@ -14,8 +14,8 @@ class TinyProjectAreaSerializer(ModelSerializer):
         ]
 
 
-class ProjectAreaSerializer(ModelSerializer):
+class AreaSerializer(ModelSerializer):
     # user = TinyUserSerializer()
     class Meta:
-        model = ProjectArea
+        model = Area
         fields = "__all__"

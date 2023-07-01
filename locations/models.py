@@ -2,7 +2,7 @@ from django.db import models
 from common.models import CommonModel
 
 
-class ProjectArea(CommonModel):
+class Area(CommonModel):
     """
     Model Definition for Project Ara
     """
@@ -43,5 +43,5 @@ class ProjectArea(CommonModel):
     def __str__(self) -> str:
         return self.name
 
-    def get_northern_extent(self):
-        return self.spatial_extent.extent[3] if self.spatial_extent else None
+    # def get_northern_extent(self):
+    #     return self.spatial_extent.extent[3] if self.spatial_extent else None

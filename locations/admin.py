@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import ProjectArea
+from .models import Area
 
 
-@admin.register(ProjectArea)
-class ProjectAreaAdmin(admin.ModelAdmin):
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "area_type",

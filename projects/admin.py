@@ -84,6 +84,7 @@ class ProjectAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
+        "old_id",
         "title",
         "tagline",
         "description",
