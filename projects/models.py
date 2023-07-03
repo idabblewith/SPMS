@@ -79,12 +79,37 @@ class Project(CommonModel):
         PENDING = ("pending", "Pending Project Plan")
         ACTIVE = ("active", "Active (Approved)")
         UPDATING = ("updating", "Update Requested")
-        CLOSURE = ("closure_requested", "Closure Requested")
+        CLOSUREREQ = ("closure_requested", "Closure Requested")
         CLOSING = ("closing", "Closure Pending Final Update")
         FINAL_UPDATE = ("final_update", "Final Update Requested")
         COMPLETED = ("completed", "Completed and Closed")
         TERMINATED = ("terminated", "Terminated and Closed")
         SUSPENDED = ("suspended", "Suspended")
+
+    ACTIVE_ONLY = (
+        StatusChoices.NEW,
+        StatusChoices.PENDING,
+        StatusChoices.ACTIVE,
+        StatusChoices.UPDATING,
+        StatusChoices.CLOSUREREQ,
+        StatusChoices.CLOSING,
+        StatusChoices.FINAL_UPDATE,
+    )
+
+    PUBLISHED_ONLY = (
+        StatusChoices.ACTIVE,
+        StatusChoices.UPDATING,
+        StatusChoices.CLOSUREREQ,
+        StatusChoices.CLOSING,
+        StatusChoices.FINAL_UPDATE,
+        StatusChoices.COMPLETED,
+    )
+
+    CLOSED_ONLY = (
+        StatusChoices.COMPLETED,
+        StatusChoices.TERMINATED,
+        StatusChoices.SUSPENDED,
+    )
 
     old_id = models.IntegerField()
     kind = models.CharField(
@@ -169,6 +194,12 @@ class ProjectDetails(models.Model):
         related_name="details",
         on_delete=models.CASCADE,
     )
+    # image = models.ForeignKey(
+    #     "medias.ProjectPhoto",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    # )
     creator = models.ForeignKey(
         "users.User",
         on_delete=models.SET_NULL,

@@ -18,6 +18,8 @@ from django.shortcuts import render
 from django.db import transaction
 from django.conf import settings
 from django.utils import timezone
+from math import ceil
+from django.db.models import Q
 
 import time
 from django.http import HttpResponse
@@ -44,18 +46,13 @@ from .models import (
 )
 import csv
 
-# TODO: Create a Downlad All Projects As CSV version that includes all projects (without IDs)
-
-# class DownloadAllProjectsAsCSVJOINED(APIView):
-# def get(self, req):
-#     pass
-
 
 class DownloadAllProjectsAsCSV(APIView):
     def get(self, req):
+        # TODO: Make it join with the other project-related tables.
         try:
             # Retrieve projects data from the database
-            core_projects = CoreFunctionProject.objects.all()
+            projects = Project.objects.all()
 
             # Create a response object with CSV content type
             res = HttpResponse(content_type="text/csv")
@@ -63,73 +60,18 @@ class DownloadAllProjectsAsCSV(APIView):
 
             # Create a CSV writer
             writer = csv.writer(res)
-            writer.writerow(["-----", "Core Function Projects", "-----"])
+            # writer.writerow(["-----", "Projects", "-----"])
 
-            # Get field names (CoreFunctionProject)
-            core_field_names = [
-                field.name for field in CoreFunctionProject._meta.fields
-            ]
+            # Get field names
+            field_names = [field.name for field in Project._meta.fields]
 
             # Write CSV headers (CoreFunctionProject)
-            writer.writerow(core_field_names)
+            writer.writerow(field_names)
             # print(res.data)
 
             # Write project data rows
-            for project in core_projects:
-                row = [getattr(project, field) for field in core_field_names]
-                writer.writerow(row)
-
-            # Add an empty row for separation
-            writer.writerow([])
-            writer.writerow(["-----", "Science Projects", "-----"])
-
-            science_projects = ScienceProject.objects.all()
-
-            # Get field names (ScienceProject)
-            science_field_names = [field.name for field in ScienceProject._meta.fields]
-
-            # Write CSV headers for (Science Project)
-            writer.writerow(science_field_names)
-
-            # Write project data rows
-            for project in science_projects:
-                row = [getattr(project, field) for field in science_field_names]
-                writer.writerow(row)
-
-            # Add an empty row for separation
-            writer.writerow([])
-            writer.writerow(["-----", "Student Projects", "-----"])
-
-            student_projects = StudentProject.objects.all()
-
-            # Get field names (StudentProject)
-            student_field_names = [field.name for field in StudentProject._meta.fields]
-
-            # Write CSV headers (StudentProject)
-            writer.writerow(student_field_names)
-
-            # Write project data rows
-            for project in student_projects:
-                row = [getattr(project, field) for field in student_field_names]
-                writer.writerow(row)
-
-            # Add an empty row for separation
-            writer.writerow([])
-            writer.writerow(["-----", "External Projects", "-----"])
-
-            external_projects = ExternalProject.objects.all()
-
-            # Get field names (ExternalProject)
-            external_field_names = [
-                field.name for field in ExternalProject._meta.fields
-            ]
-
-            # Write CSV headers (StudentProject)
-            writer.writerow(external_field_names)
-
-            # Write project data rows
-            for project in external_projects:
-                row = [getattr(project, field) for field in external_field_names]
+            for project in projects:
+                row = [getattr(project, field) for field in field_names]
                 writer.writerow(row)
 
             return res
@@ -212,16 +154,77 @@ class ResearchFunctionDetail(APIView):
 
 
 class Projects(APIView):
-    def get(self, req):
-        all = Project.objects.all()
-        ser = TinyProjectSerializer(
-            all,
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        # TODO: Also get by Business Area and categorize the projects into
+        # Business Area arrays and send back an array of ba arrays containing the projects.
+        try:
+            page = int(request.query_params.get("page", 1))
+        except ValueError:
+            # If the user sends a non-integer value as the page parameter
+            page = 1
+
+        page_size = 12
+        # settings.PAGE_SIZE
+        start = (page - 1) * page_size
+        end = start + page_size
+
+        search_term = request.GET.get("searchTerm")
+
+        # Get the values of the checkboxes
+        only_active = bool(request.GET.get("only_active", False))
+        only_inactive = bool(request.GET.get("only_inactive", False))
+        ba_slug = request.GET.get("businessarea", "All")
+
+        if ba_slug != "All":
+            projects = Project.objects.filter(business_area__slug=ba_slug)
+        else:
+            projects = Project.objects.all()
+
+        # Interaction logic between checkboxes
+        if only_active:
+            only_inactive = False
+        elif only_inactive:
+            only_active = False
+
+        if search_term:
+            projects = projects.filter(
+                Q(title__icontains=search_term)
+                | Q(description__icontains=search_term)
+                | Q(tagline__icontains=search_term)
+                | Q(keywords__icontains=search_term)
+            )
+
+        # Filter projects based on checkbox values (this checks whether in an array of status' considered
+        # active)
+
+        if only_active:
+            projects = projects.filter(status__in=Project.ACTIVE_ONLY)
+        elif only_inactive:
+            projects = projects.exclude(status__in=Project.ACTIVE_ONLY)
+
+        # # Sort projects alphabetically based on title
+        # projects = projects.order_by("title")
+
+        total_projects = projects.count()
+        total_pages = ceil(total_projects / page_size)
+
+        serialized_projects = ProjectSerializer(
+            projects[start:end],
             many=True,
+            context={
+                "request": request,
+                "projects": projects[start:end],
+            },
         )
-        return Response(
-            ser.data,
-            status=HTTP_200_OK,
-        )
+
+        response_data = {
+            "projects": serialized_projects.data,
+            "total_pages": total_pages,
+        }
+
+        return Response(response_data, status=HTTP_200_OK)
 
     def post(self, req):
         ser = ProjectSerializer(

@@ -236,9 +236,9 @@ class ProjectPhoto(CommonModel):
     file = models.URLField()
     project = models.ForeignKey(
         "projects.Project",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
+        # blank=True,
+        # null=True,
         related_name="image",
     )
     uploader = models.ForeignKey(

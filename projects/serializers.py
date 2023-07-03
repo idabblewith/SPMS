@@ -1,3 +1,5 @@
+from medias.models import ProjectPhoto
+from medias.serializers import ProjectImageSerializer
 from .models import (
     # ScienceProject,
     # StudentProject,
@@ -7,6 +9,8 @@ from .models import (
     ResearchFunction,
 )
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from rest_framework.response import Response
 
 
 # class ScienceProjectSerializer(ModelSerializer):
@@ -81,19 +85,55 @@ from rest_framework.serializers import ModelSerializer
 
 
 class ProjectSerializer(ModelSerializer):
-    model = Project
-    fields = "__all__"
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = (
+            "pk",
+            "kind",
+            "title",
+            "status",
+            "description",
+            "tagline",
+            "keywords",
+            "year",
+            "number",
+            "start_date",
+            "end_date",
+            "created_at",
+            "updated_at",
+            "business_area",
+            "image",
+        )
+
+    def get_image(self, project):
+        project_photo = ProjectPhoto.objects.filter(project=project).first()
+        if project_photo:
+            return project_photo.file
+        return None
 
 
 class TinyProjectSerializer(ModelSerializer):
-    model = Project
-    fields = (
-        "title",
-        "status",
-        "kind",
-        "year",
-        "business_area",
-    )
+    image = serializers.SerializerMethodField()
+    # image = ProjectImageSerializer()
+
+    class Meta:
+        model = Project
+        fields = (
+            "title",
+            "status",
+            "kind",
+            "year",
+            "business_area",
+            "image",
+        )
+
+    def get_image(self, project):
+        project_photo = ProjectPhoto.objects.filter(project=project).first()
+        if project_photo:
+            return project_photo.file
+        return None
 
 
 class TinyResearchFunctionSerializer(ModelSerializer):

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, IntegerField, CharField
-from .models import BusinessAreaPhoto, UserAvatar
+from .models import BusinessAreaPhoto, UserAvatar, AgencyImage, ProjectPhoto
 
 # from users.serializers import TinyUserSerializer
 
@@ -29,10 +29,19 @@ class UserAvatarSerializer(ModelSerializer):
         ]
 
 
+class ProjectImageSerializer(ModelSerializer):
+    class Meta:
+        model = ProjectPhoto
+        fields = [
+            "pk",
+            "file",
+        ]
+
+
 class AgencyImageSerializer(ModelSerializer):
     # user = TinyUserSerializer()
     class Meta:
-        model = UserAvatar
+        model = AgencyImage
         fields = [
             "pk",
             "file",
