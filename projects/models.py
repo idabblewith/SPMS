@@ -202,18 +202,6 @@ class ProjectArea(CommonModel):
     )
 
 
-# class ProjectTeam(models.Model):
-#     project = models.ForeignKey(
-#         "projects.Project",
-#         related_name="team",
-#         on_delete=models.CASCADE,
-#     )
-#     members = models.ManyToManyField(
-#         "projects.ProjectMember",
-#         related_name="team_member_of",
-#     )
-
-
 class ProjectMember(CommonModel):
     class RoleChoices(models.TextChoices):
         SUPERVISING = ("supervising", "Supervising Scientist")
@@ -283,7 +271,7 @@ class ProjectMember(CommonModel):
         verbose_name_plural = "Project Members"
 
 
-class ProjectDetails(models.Model):
+class ProjectDetail(CommonModel):
     project = models.ForeignKey(
         "projects.Project",
         related_name="details",
@@ -336,17 +324,25 @@ class ProjectDetails(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    supervising_scientist_list = models.ManyToManyField(
-        "users.User",
-        related_name="projects_as_supervising_scientist",
+    # supervising_scientist_list = models.ManyToManyField(
+    #     "users.User",
+    #     related_name="projects_as_supervising_scientist",
+    # )
+    # area_list = models.ManyToManyField(
+    #     "locations.Area",
+    #     related_name="projects_location",
+    # )
+    old_output_program_id = models.BigIntegerField(
+        blank=True,
+        null=True,
     )
-    area_list = models.ManyToManyField(
-        "locations.Area",
-        related_name="projects_location",
-    )
-    # output_program =
 
-    pass
+    def __str__(self) -> str:
+        return f"(DETAILS) {self.project}"
+
+    class Meta:
+        verbose_name = "Project Detail"
+        verbose_name_plural = "Project Details"
 
 
 # Science Project CSV has no extra data
