@@ -352,101 +352,87 @@ class ProjectDetail(CommonModel):
 
 
 class StudentProjectDetails(models.Model):
-    pass
+    """
+    Student Project Model Definition
+    """
+
+    class StudentLevelChoices(models.TextChoices):
+        PD = ("pd", "Post-Doc")
+        PHD = ("phd", "PhD")
+        MSC = ("msc", "MSc")
+        HON = ("honours", "BSc Honours")
+        YR4 = ("fourth_year", "Fourth Year")
+        YR3 = ("third_year", "Third Year")
+        UND = ("undergrad", "Undergradate")
+
+    project = models.OneToOneField(
+        "projects.Project",
+        on_delete=models.CASCADE,
+        related_name="student_project_info",
+    )
+    level = models.CharField(
+        max_length=50,
+        choices=StudentLevelChoices.choices,
+        null=True,
+        blank=True,
+        default=StudentLevelChoices.PHD,
+        help_text="The academic qualification achieved through this project.",
+    )
+
+    organisation = models.TextField(
+        verbose_name="Academic Organisation",
+        blank=True,
+        null=True,
+        help_text="The full name of the academic organisation.",
+    )
+    old_id = models.BigIntegerField()
+
+    class Meta:
+        verbose_name = "Student Project"
+        verbose_name_plural = "Student Projects"
+
+    def __str__(self) -> str:
+        return f"{self.title} | {self.organisation}"
 
 
 class ExternalProjectDetails(models.Model):
-    pass
-    # collaboration_with = models.CharField(
-    #     max_length=300,
-    # )
-    # staff_list =
-    # # renamed from 'name'
-    # budget = models.CharField(
-    #     max_length=250,
-    #     null=True,
-    #     blank=True,
-    # )
-    # description = models.CharField(
-    #     max_length=500,
-    #     null=True,
-    #     blank=True,
-    # )
-    # aims = models.CharField(
-    #     max_length=500,
-    #     null=True,
-    #     blank=True,
-    # )
+    # max_length set high as multiple projects exceeding 3000 charcters for different fields
+    # TODO: Potentially will need to increase to ETL into JSON format.
+    project = models.OneToOneField(
+        "projects.Project",
+        on_delete=models.CASCADE,
+        related_name="external_project_info",
+    )
+    collaboration_with = models.CharField(
+        max_length=1500,
+        default="NO COLLABORATOR SET"
+        # blank=True,
+        # null=True,
+    )
+    # renamed from 'name'
+    budget = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    description = models.CharField(
+        max_length=5000,
+        null=True,
+        blank=True,
+    )
+    aims = models.CharField(
+        max_length=2500,
+        null=True,
+        blank=True,
+    )
+    old_id = models.BigIntegerField()
 
+    class Meta:
+        verbose_name = "External Project"
+        verbose_name_plural = "External Projects"
 
-# class ProjectDetails(CommonModel):
-#     """
-#     Contains any additional fields for Projects (non-specific to type)
-#     """
-
-#     creator = models.ForeignKey(
-#         "users.User",
-#         on_delete=models.SET_NULL,  # Check if this is desired behaviour
-#         null=True,
-#         blank=True,
-#         related_name="external_projects_created",
-#     )
-#     modifier = models.ForeignKey(
-#         "users.User",
-#         on_delete=models.SET_NULL,  # Check if this is desired behaviour
-#         null=True,
-#         blank=True,
-#         related_name="external_projects_modified",
-#     )
-#     project_owner = models.ForeignKey(
-#         "users.User",
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True,
-#         related_name="projects_owned",
-#     )
-
-
-# class StudentProjectDetails(CommonModel):
-#     """
-#     Student Project Model Definition
-#     """
-
-#     class StudentLevelChoices(models.TextChoices):
-#         PD = ("pd", "Post-Doc")
-#         PHD = ("phd", "PhD")
-#         MSC = ("msc", "MSc")
-#         HON = ("honours", "BSc Honours")
-#         YR4 = ("fourth_year", "Fourth Year")
-#         YR3 = ("third_year", "Third Year")
-#         UND = ("undergrad", "Undergradate")
-
-#     project = models.OneToOneField(
-#         "projects.Project",
-#         on_delete=models.CASCADE,
-#     )
-#     level = models.CharField(
-#         max_length=50,
-#         choices=StudentLevelChoices.choices,
-#         null=False,
-#         blank=True,
-#         default=StudentLevelChoices.PHD,
-#         help_text="The academic qualification achieved through this project.",
-#     )
-
-#     organisation = models.TextField(
-#         verbose_name="Academic Organisation",
-#         blank=True,
-#         null=True,
-#         help_text="The full name of the academic organisation.",
-#     )
-
-#     class Meta:
-#         verbose_name = "Student Project"
-#         verbose_name_plural = "Student Projects"
-
-#     def __str__(self) -> str:
-#         return f"{self.title} | {self.organisation}"
+    def __str__(self) -> str:
+        return f"{self.organisation} | {self.collaboration_with} "
 
 
 # CREATE SEPARATE TABLE FOR STUDENT AND STAFF LISTS
