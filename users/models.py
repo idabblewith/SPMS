@@ -55,7 +55,7 @@ class User(AbstractUser):
         unique=True,
     )
 
-    old_pk = models.IntegerField(
+    old_pk = models.BigIntegerField(
         null=True,
         blank=True,
         verbose_name="Old Primary Key",

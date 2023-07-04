@@ -130,9 +130,14 @@ class BusinessArea(CommonModel):
     old_id = models.IntegerField()
 
     focus = models.CharField(
-        max_length=1250
+        max_length=1250,
+        blank=True,
+        null=True,
     )  # NOTE SPECIES AND COMMUNITIES 1230 words (this was originally 250 words)
-    introduction = models.TextField()
+    introduction = models.TextField(
+        blank=True,
+        null=True,
+    )
     image = models.ForeignKey(
         "medias.BusinessAreaPhoto",
         blank=True,

@@ -37,7 +37,7 @@ class ResearchFunction(CommonModel):
         default=False,
         help_text="Whether this research function has been deprecated or not.",
     )
-    old_id = models.IntegerField()
+    old_id = models.BigIntegerField()
 
     class Meta:
         verbose_name = "Research Function"
@@ -111,7 +111,7 @@ class Project(CommonModel):
         StatusChoices.SUSPENDED,
     )
 
-    old_id = models.IntegerField()
+    old_id = models.BigIntegerField()
     kind = models.CharField(
         choices=CategoryKindChoices.choices,
         blank=True,
@@ -188,6 +188,91 @@ class Project(CommonModel):
         return f"({self.kind.upper()}) {self.title}"
 
 
+class ProjectAreas(models.Model):
+    pass
+
+
+# class ProjectTeam(models.Model):
+#     project = models.ForeignKey(
+#         "projects.Project",
+#         related_name="team",
+#         on_delete=models.CASCADE,
+#     )
+#     members = models.ManyToManyField(
+#         "projects.ProjectMember",
+#         related_name="team_member_of",
+#     )
+
+
+class ProjectMember(CommonModel):
+    class RoleChoices(models.TextChoices):
+        SUPERVISING = ("supervising", "Supervising Scientist")
+        RESEARCH = ("research", "Research Scientist")
+        TECHNICAL = ("technical", "Technical Officer")
+        EXTERNALCOL = ("externalcol", "External Collaborator")
+        ACADEMICSUPER = ("academicsuper", "Academic Supervisor")
+        STUDENT = ("superstudent", "Supervised Student")
+        EXTERNALPEER = ("externalpeer", "External Peer")
+        CONSULTED = ("consulted", "Consulted Peer")
+        GROUP = ("group", "Involved Group")
+
+    STAFF_ROLES = (
+        RoleChoices.SUPERVISING,
+        RoleChoices.RESEARCH,
+        RoleChoices.TECHNICAL,
+    )
+
+    project = models.ForeignKey(
+        "projects.Project",
+        related_name="members",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        "users.User",
+        related_name="member_of",
+        on_delete=models.CASCADE,
+    )
+    role = models.CharField(
+        max_length=50,
+        choices=RoleChoices.choices,
+    )
+    time_allocation = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name="Time allocation (0 to 1 FTE)",
+        help_text="Indicative time allocation as a fraction of a Full Time Equivalent (210 person-days). Values between 0 and 1. Fill in estimated allocation for the next 12 months.",
+    )
+    position = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name="List position",
+        default=100,
+        help_text="The lowest position number comes first in the team members list. Ignore to keep alphabetical order, increase to shift member towards the end of the list, decrease to promote member to beginning of the list.",
+    )
+    short_code = models.CharField(
+        blank=True,
+        null=True,
+        max_length=500,
+        verbose_name="Short code",
+        help_text="Cost code for this project membership's salary. Allocated by divisional admin.",
+    )
+    comments = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Any comments clarifying the project membership.",
+    )
+
+    old_id = models.BigIntegerField()
+
+    def __str__(self) -> str:
+        return f"{self.user} ({self.project}) "
+
+    class Meta:
+        verbose_name = "Project Member"
+        verbose_name_plural = "Project Members"
+
+
 class ProjectDetails(models.Model):
     project = models.ForeignKey(
         "projects.Project",
@@ -241,12 +326,6 @@ class ProjectDetails(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    team_list = models.ManyToManyField(
-        "users.User",
-        related_name="projects_teammember",
-        # blank=True,
-        # null=True,
-    )
     supervising_scientist_list = models.ManyToManyField(
         "users.User",
         related_name="projects_as_supervising_scientist",
@@ -257,14 +336,6 @@ class ProjectDetails(models.Model):
     )
     # output_program =
 
-    pass
-
-
-class ProjectAreas(models.Model):
-    pass
-
-
-class ProjectMembers(models.Model):
     pass
 
 

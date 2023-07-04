@@ -1,75 +1,10 @@
 from django.contrib import admin
 from .models import (
-    # ScienceProject,
-    # StudentProject,
-    # ExternalProject,
-    # CoreFunctionProject,
     Project,
-    # ProjectDetails,
-    # StudentProjectDetails,
     ResearchFunction,
+    ProjectMember,
 )
 from categories.serializers import ProjectCategorySerializer
-
-
-# @admin.register(ScienceProject)
-# class ScienceProjectAdmin(admin.ModelAdmin):
-#     kind = ProjectCategorySerializer()
-#     list_display = (
-#         # "creator_id",
-#         "title",
-#         "kind",
-#         "active",
-#         "status",
-#         # "created_at",
-#         # "updated_at",
-#     )
-
-
-# @admin.register(StudentProject)
-# class StudentProjectAdmin(admin.ModelAdmin):
-#     kind = ProjectCategorySerializer()
-#     list_display = (
-#         # "creator_id",
-#         "level",
-#         "organisation",
-#         "title",
-#         "kind",
-#         "active",
-#         "status",
-#         # "created_at",
-#         # "updated_at",
-#     )
-
-
-# @admin.register(ExternalProject)
-# class ExternalProjectAdmin(admin.ModelAdmin):
-#     kind = ProjectCategorySerializer()
-#     list_display = (
-#         # "creator_id",
-#         "time_budget",
-#         "monetary_budget",
-#         "title",
-#         "kind",
-#         "active",
-#         "status",
-#         # "created_at",
-#         # "updated_at",
-#     )
-
-
-# @admin.register(CoreFunctionProject)
-# class CoreFunctionProjectAdmin(admin.ModelAdmin):
-#     kind = ProjectCategorySerializer()
-#     list_display = (
-#         "creator_id",
-#         "title",
-#         "kind",
-#         "active",
-#         "status",
-#         # "created_at",
-#         # "updated_at",
-#     )
 
 
 @admin.register(Project)
@@ -115,4 +50,23 @@ class ResearchFunctionAdmin(admin.ModelAdmin):
     search_fields = [
         "name",
         "description",
+    ]
+
+
+@admin.register(ProjectMember)
+class ProjectMemberAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "project",
+        # "created_at",
+        "updated_at",
+    ]
+
+    # list_filter = [
+    #     "user",
+    # ]
+
+    search_fields = [
+        "user__name",
+        "project__title",
     ]
