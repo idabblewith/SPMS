@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.Projects.as_view()),
     path("<int:pk>", views.ProjectDetail.as_view()),
     path("<int:pk>/team", views.ProjectTeam.as_view()),
+    path("<int:pk>/areas", views.AreasForProject.as_view()),
     path("external", views.ExternalProjects.as_view()),
     path("student", views.StudentProjects.as_view()),
     path("science", views.ScienceProjects.as_view()),
@@ -12,4 +13,6 @@ urlpatterns = [
     path("download", views.DownloadAllProjectsAsCSV.as_view()),
     path("research_functions", views.ResearchFunctions.as_view()),
     path("research_functions/<int:pk>", views.ResearchFunctionDetail.as_view()),
+    path("projectareas", views.ProjectAreas.as_view()),
+    path("projectareas/<int:pk>", views.ProjectAreaDetail.as_view()),
 ]

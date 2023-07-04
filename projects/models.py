@@ -188,8 +188,18 @@ class Project(CommonModel):
         return f"({self.kind.upper()}) {self.title}"
 
 
-class ProjectAreas(models.Model):
-    pass
+class ProjectArea(CommonModel):
+    old_id = models.BigIntegerField()
+    project = models.ForeignKey(
+        "projects.Project",
+        related_name="areas",
+        on_delete=models.CASCADE,
+    )
+    area = models.ForeignKey(
+        "locations.Area",
+        related_name="projects_in_area",
+        on_delete=models.CASCADE,
+    )
 
 
 # class ProjectTeam(models.Model):

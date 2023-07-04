@@ -25,6 +25,7 @@ import time
 from django.http import HttpResponse
 
 from .serializers import (
+    ProjectAreaSerializer,
     ProjectSerializer,
     ProjectMemberSerializer,
     TinyProjectSerializer,
@@ -35,6 +36,7 @@ from .serializers import (
 from users.models import User
 from .models import (
     Project,
+    ProjectArea,
     ProjectMember,
     ResearchFunction,
 )
@@ -337,6 +339,140 @@ class ProjectTeam(APIView):
                 ser.errors,
                 status=HTTP_400_BAD_REQUEST,
             )
+
+
+class ProjectAreas(APIView):
+    def get(self, req):
+        all = ProjectArea.objects.all()
+        ser = ProjectAreaSerializer(
+            all,
+            many=True,
+        )
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    def post(self, req):
+        ser = ProjectAreaSerializer(
+            data=req.data,
+        )
+        if ser.is_valid():
+            projectarea = ser.save()
+            return Response(
+                ProjectAreaSerializer(projectarea).data,
+                status=HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectAreaDetail(APIView):
+    def go(self, req, pk):
+        try:
+            obj = ProjectArea.objects.get(pk=pk)
+        except ProjectArea.DoesNotExist:
+            raise NotFound
+        return obj
+
+    def get(self, req, pk):
+        projarea = self.go(pk)
+        ser = ProjectAreaSerializer(projarea)
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    def delete(self, req, pk):
+        projarea = self.go(pk)
+        projarea.delete()
+        return Response(
+            status=HTTP_204_NO_CONTENT,
+        )
+
+    def put(self, req, pk):
+        projarea = self.go(pk)
+        ser = ProjectAreaSerializer(
+            projarea,
+            data=req.data,
+            partial=True,
+        )
+        if ser.is_valid():
+            uprojarea = ser.save()
+            return Response(
+                ProjectAreaSerializer(uprojarea).data,
+                status=HTTP_202_ACCEPTED,
+            )
+        else:
+            return Response(
+                ser.errors,
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+
+class AreasForProject(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def go(self, req, pk):
+        try:
+            obj = ProjectArea.objects.get(project_id=pk)
+        except ProjectArea.DoesNotExist:
+            raise NotFound
+        return obj
+
+    def get(self, req, pk):
+        project_areas = self.go(pk)
+        ser = ProjectAreaSerializer(
+            project_areas,
+            many=True,
+        )
+        return Response(
+            ser.data,
+            status=HTTP_200_OK,
+        )
+
+    # def post(self, req):
+    #     ser = ProjectAreaSerializer(
+    #         data=req.data,
+    #     )
+    #     if ser.is_valid():
+    #         project_area = ser.save()
+    #         return Response(
+    #             ProjectAreaSerializer(project_area).data,
+    #             status=HTTP_201_CREATED,
+    #         )
+    #     else:
+    #         return Response(
+    #             HTTP_400_BAD_REQUEST,
+    #         )
+
+    # def delete(self, req, pk):
+    #     team = self.go(pk)
+    #     team.delete()
+    #     return Response(
+    #         status=HTTP_204_NO_CONTENT,
+    #     )
+
+    # def put(self, req, pk):
+    #     team = self.go(pk)
+    #     ser = ProjectAreaSerializer(
+    #         team,
+    #         data=req.data,
+    #         partial=True,
+    #     )
+    #     if ser.is_valid():
+    #         uteam = ser.save()
+    #         return Response(
+    #             ProjectAreaSerializer(uteam).data,
+    #             status=HTTP_202_ACCEPTED,
+    #         )
+    #     else:
+    #         return Response(
+    #             ser.errors,
+    #             status=HTTP_400_BAD_REQUEST,
+    #         )
 
 
 # GETS

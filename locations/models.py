@@ -4,7 +4,7 @@ from common.models import CommonModel
 
 class Area(CommonModel):
     """
-    Model Definition for Project Ara
+    Model Definition for Areas
     """
 
     class AreaTypeChoices(models.TextChoices):
@@ -37,8 +37,8 @@ class Area(CommonModel):
     old_id = models.IntegerField()
 
     class Meta:
-        verbose_name = "Project Area"
-        verbose_name_plural = "Project Areas"
+        verbose_name = "Area"
+        verbose_name_plural = "Areas"
 
     def __str__(self) -> str:
         return self.name

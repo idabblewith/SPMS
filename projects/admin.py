@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import (
     Project,
+    ProjectArea,
     ResearchFunction,
     ProjectMember,
 )
@@ -68,5 +69,21 @@ class ProjectMemberAdmin(admin.ModelAdmin):
 
     search_fields = [
         "user__name",
+        "project__title",
+    ]
+
+
+@admin.register(ProjectArea)
+class ProjectAreaAdmin(admin.ModelAdmin):
+    list_display = [
+        "project",
+        "area",
+    ]
+
+    list_filter = [
+        "area",
+    ]
+
+    search_fields = [
         "project__title",
     ]

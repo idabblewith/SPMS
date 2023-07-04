@@ -2,6 +2,7 @@ from medias.models import ProjectPhoto
 from medias.serializers import ProjectImageSerializer
 from .models import (
     Project,
+    ProjectArea,
     ProjectMember,
     ResearchFunction,
 )
@@ -105,3 +106,9 @@ class ProjectMemberSerializer(ModelSerializer):
             "comments",
             "short_code",
         ]
+
+
+class ProjectAreaSerializer(ModelSerializer):
+    class Meta:
+        model = ProjectArea
+        fields = ["old_id", "project", "area"]
