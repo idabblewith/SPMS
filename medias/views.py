@@ -26,27 +26,7 @@ from .models import BusinessAreaPhoto
 from .serializers import BusinessAreaPhotoSerializer
 
 
-class BusinessAreaPhotoDetail(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def go(self, pk):
-        try:
-            return BusinessAreaPhoto.objects.get(pk=pk)
-        except BusinessAreaPhoto.DoesNotExist:
-            raise NotFound
-
-    def delete(self, req, pk):
-        business_photo = self.go(pk)
-
-        if (
-            business_photo.uploader.is_admin == False
-            and business_photo.uploader != req.user
-        ):
-            raise PermissionDenied
-        business_photo.delete()
-        return Response(
-            status=HTTP_204_NO_CONTENT,
-        )
+# ==================================================================================================
 
 
 class GetUploadURL(APIView):
@@ -71,3 +51,39 @@ class GetUploadURL(APIView):
         #         "uploadURL": result.get("uploadURL"),
         #     }
         # )
+
+
+# ==================================================================================================
+
+
+# class BusinessAreaPhotos(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, req):
+#         pass
+
+#     def post(self, req):
+#         pass
+
+
+class BusinessAreaPhotoDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def go(self, pk):
+        try:
+            return BusinessAreaPhoto.objects.get(pk=pk)
+        except BusinessAreaPhoto.DoesNotExist:
+            raise NotFound
+
+    def delete(self, req, pk):
+        business_photo = self.go(pk)
+
+        if (
+            business_photo.uploader.is_admin == False
+            and business_photo.uploader != req.user
+        ):
+            raise PermissionDenied
+        business_photo.delete()
+        return Response(
+            status=HTTP_204_NO_CONTENT,
+        )

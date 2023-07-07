@@ -1,9 +1,12 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import ARARReport
+from .models import AnnualReport
 
 
-@admin.register(ARARReport)
-class ARARReportAdmin(admin.ModelAdmin):
-    list_display = ("year",)
+@admin.register(AnnualReport)
+class AnnualReportAdmin(admin.ModelAdmin):
+    list_display = (
+        "year",
+        "pdf",
+    )

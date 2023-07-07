@@ -398,6 +398,8 @@ class StudentProjectDetails(models.Model):
 class ExternalProjectDetails(models.Model):
     # max_length set high as multiple projects exceeding 3000 charcters for different fields
     # TODO: Potentially will need to increase to ETL into JSON format.
+    # MUST LEAVE MAX_LENGTH AS IS, AND ENFORCE CHAR LIMIT ON FRONTEND
+
     project = models.OneToOneField(
         "projects.Project",
         on_delete=models.CASCADE,
@@ -411,17 +413,17 @@ class ExternalProjectDetails(models.Model):
     )
     # renamed from 'name'
     budget = models.CharField(
-        max_length=500,
+        max_length=1000,
         null=True,
         blank=True,
     )
     description = models.CharField(
-        max_length=5000,
+        max_length=10000,
         null=True,
         blank=True,
     )
     aims = models.CharField(
-        max_length=2500,
+        max_length=5000,
         null=True,
         blank=True,
     )

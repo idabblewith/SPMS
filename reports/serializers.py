@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import ARARReport
+from .models import AnnualReport
 
 
-class ARARReportSerializer(serializers.ModelSerializer):
+class AnnualReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ARARReport
+        model = AnnualReport
         fields = "__all__"

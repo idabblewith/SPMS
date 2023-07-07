@@ -1,7 +1,35 @@
-from rest_framework.serializers import ModelSerializer, IntegerField, CharField
-from .models import BusinessAreaPhoto, UserAvatar, AgencyImage, ProjectPhoto
+from rest_framework.serializers import ModelSerializer
+from .models import (
+    AnnualReportImage,
+    BusinessAreaPhoto,
+    ReportPDF,
+    UserAvatar,
+    AgencyImage,
+    ProjectPhoto,
+)
 
-# from users.serializers import TinyUserSerializer
+
+class ReportPDFSerializer(ModelSerializer):
+    class Meta:
+        model = ReportPDF
+        fields = [
+            "pk",
+            "year",
+            "file",
+            "created_at",
+        ]
+
+
+class AnnualReportImageSerializer(ModelSerializer):
+    class Meta:
+        model = AnnualReportImage
+        fields = [
+            "pk",
+            "year",
+            "kind",
+            "file",
+            "uploader",
+        ]
 
 
 class BusinessAreaPhotoSerializer(ModelSerializer):
@@ -47,36 +75,3 @@ class AgencyImageSerializer(ModelSerializer):
             "file",
             "agency",
         ]
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-
-    #     model = self.context.get("model")
-
-    #     if model:
-    #         if issubclass(model, BusinessAreaPhoto):
-    #             self.fields["year"] = IntegerField()
-    #             self.fields["business_area"] = CharField()
-    #             # self.fields["uploader"] = TinyUserSerializer(read_only=True)
-
-    # def create(self, validated_data):
-    #     model = self.context.get("model")
-
-    #     # Handle model-specific create logic if needed
-    #     if model and issubclass(model, BusinessAreaPhoto):
-    #         year = validated_data.pop("year")
-    #         business_area = validated_data.pop("business_area")
-    #         uploader = validated_data.pop("uploader")
-
-    #         photo = BusinessAreaPhoto.objects.create(
-    #             year=year, business_area=business_area, **validated_data
-    #         )
-
-    #         # Set the uploader relationship
-    #         photo.uploader = uploader
-    #         photo.save()
-
-    #         return photo
-
-    #     # Default create logic for the generic photo model
-    #     return super().create(validated_data)

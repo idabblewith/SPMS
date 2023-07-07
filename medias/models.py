@@ -7,20 +7,13 @@ from common.models import CommonModel
 # ARAR
 
 
-class ARARPDF(CommonModel):
+class ReportPDF(CommonModel):
     """
     Model Definition for the actual Report PDF
     """
 
     file = models.URLField()
     year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="generated_pdfs",
-    )
 
     def __str__(self) -> str:
         return f"{self.year} ARAR PDF"
@@ -30,172 +23,38 @@ class ARARPDF(CommonModel):
         verbose_name_plural = "ARAR PDFs"
 
 
-class CoverPage(CommonModel):
-
-    """
-    Model Definition for the ARAR Front Page Cover (Provided by Graphic Designers in A4) for the year
-    """
+class AnnualReportImage(CommonModel):
+    class ImageTypes(models.TextChoices):
+        COVER = "cover", "Cover"
+        REAR_COVER = "rear_cover", "Rear Cover"
+        SDCHART = "sdchart", "Service Delivery Chart"
+        SDCHAPTER = "service_delivery", "Service Delivery"
+        RESEARCHCHAPTER = "research", "Research"
+        PARTNERSHIPSCHAPTER = "partnerships", "Partnerships"
+        COLLABORATIONSCHAPTER = "collaborations", "Collaborations"
+        STUDENTPROJECTSCHAPTER = "student_projects", "Student Projects"
+        PUBLICATIONSCHAPTER = "publications", "Publications"
 
     file = models.URLField()
-    year = models.DateField()
+    year = models.PositiveIntegerField()
+    kind = models.CharField(
+        max_length=140,
+        choices=ImageTypes.choices,
+    )
     uploader = models.ForeignKey(
         "users.User",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name="front_covers_uploaded",
+        related_name="annual_report_images_uploaded",
     )
 
     def __str__(self) -> str:
-        return "CoverPage Photo File"
+        return f"({self.year}) {self.kind.capitalize} Annual Report Image"
 
     class Meta:
-        verbose_name = "Cover Page"
-        verbose_name_plural = "Cover Pages"
-
-
-class ServiceDeliveryImage(CommonModel):
-    """
-    Model Definition for the ARAR Service Delivery Image for the year
-
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="service_delivery_images_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "ServiceDelivery Photo File"
-
-    class Meta:
-        verbose_name = "Service Delivery Image"
-        verbose_name_plural = "Service Delivery Images"
-
-
-class PartnershipsImage(CommonModel):
-    """
-    Model Definition for the ARAR Partnerships Image for the year
-
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="partnership_images_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "Partnerships Photo File"
-
-    class Meta:
-        verbose_name = "Partnership Image"
-        verbose_name_plural = "Partnership Images"
-
-
-class StudentProjectsImage(CommonModel):
-    """
-    Model Definition for the ARAR Student Projects Image for the year
-
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="student_project_images_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "StudentProjects Photo File"
-
-    class Meta:
-        verbose_name = "Student Projects Image"
-        verbose_name_plural = "Student Projects Images"
-
-
-class StudentReportsImage(CommonModel):
-    """
-    Model Definition for the ARAR Student Reports Image for the year
-
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="student_report_images_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "StudentReports Photo File"
-
-    class Meta:
-        verbose_name = "Student Reports Image"
-        verbose_name_plural = "Student Reports Images"
-
-
-class PublicationsImage(CommonModel):
-    """
-    Model Definition for the ARAR Publications Image for the year
-
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="publication_images_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "Publications Photo File"
-
-    class Meta:
-        verbose_name = "Publications Image"
-        verbose_name_plural = "Publications Images"
-
-
-class RearPage(CommonModel):
-
-    """
-    Model Definition for Rear Page Cover for the year (Provided by Graphic Designers in A4)
-    """
-
-    file = models.URLField()
-    year = models.DateField()
-    uploader = models.ForeignKey(
-        "users.User",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="rear_covers_uploaded",
-    )
-
-    def __str__(self) -> str:
-        return "RearPage Photo File"
-
-    class Meta:
-        verbose_name = "Rear Page Image"
-        verbose_name_plural = "Rear Page Images"
+        verbose_name = "Annual Reoprt Image"
+        verbose_name_plural = "Annual Reoprt Images"
 
 
 class BusinessAreaPhoto(CommonModel):
@@ -228,6 +87,7 @@ class BusinessAreaPhoto(CommonModel):
         verbose_name_plural = "Business Area Images"
 
 
+# Includes student projects
 class ProjectPhoto(CommonModel):
     """
     Model Definition for Project Photos

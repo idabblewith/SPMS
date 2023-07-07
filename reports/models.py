@@ -4,38 +4,32 @@ from common.models import CommonModel
 from django.core.validators import MinValueValidator
 
 
-class ARARReport(CommonModel):
+# Renamed from ARARReport
+class AnnualReport(CommonModel):
     """
     The Annual Research Report.
 
     There can only be one ARR per year, enforced with a `unique` year.
     """
 
-    pdf = models.ForeignKey(
-        "medias.ARARPDF",
-        on_delete=models.SET_NULL,
+    divisions = models.ManyToManyField(
+        "agencies.Division",
+        # on_delete=models.SET_NULL,
         blank=True,
-        null=True,
-        editable=False,
-        help_text="The PDF file generated for the report.",
+        # null=True,
+        related_name="reports_in",
+        help_text="Divisions included in this report",
     )
 
-    year = models.DateField(
+    year = models.PositiveIntegerField(
         verbose_name="Report Year",
         help_text=(
             "The publication year of this report with four digits, e.g. 2014 for the ARAR 2013-2014"
         ),
         unique=True,
-        validators=[MinValueValidator(2013)],  # Set to Date Value instead of int
-    )
-
-    divisions = models.ForeignKey(
-        "agencies.DepartmentalService",  # CHANGED FROM DIVISIONS
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="reports",
-        help_text="Divisions included in this report",
+        validators=[
+            MinValueValidator(2013)
+        ],  # Potentially Set to Date Value instead of int
     )
 
     dm = models.TextField(
@@ -45,30 +39,47 @@ class ARARReport(CommonModel):
         help_text="Directors's message (less than 10,000 words)",
     )
 
-    coverpage = models.ForeignKey(
-        "medias.CoverPage",
+    # coverpage
+    cover_page = models.ForeignKey(
+        "medias.AnnualReportImage",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         help_text="The cover page for the document",
+        related_name="cover_page",
     )
 
-    rearcoverpage = models.ForeignKey(
-        "medias.RearPage",
+    # rearcoverpage
+    rear_cover_page = models.ForeignKey(
+        "medias.AnnualReportImage",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         help_text="The back page for the document",
+        related_name="rear_cover_page",
     )
 
-    # sds_chapter_image = models.ForeignKey(
-    #     "medias.Photo",
-    #     blank=True,
-    #     null=True,
-    #     size=[2480, 1240],
-    #     help_text="",
-    # )
+    # sds_chapterimage (service_delivery_structure)
+    sds_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="sds_chapter_image",
+    )
 
+    # Previously sds_orgchart
+    service_delivery_chart = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        # size=[2480, 2480],
+        blank=True,
+        null=True,
+        help_text="The 'Service Delivery Structure' page image (2480pt, 2480pt).",
+        related_name="service_delivery_chart",
+    )
+
+    # sds_intro
     service_delivery_intro = models.TextField(
         verbose_name="Service Deilvery Structure",
         blank=True,
@@ -76,127 +87,93 @@ class ARARReport(CommonModel):
         help_text="Introductory paragraph for the Science Delivery Structure section in the ARAR",
     )
 
-    # Previously sds_orgchart
-    service_delivery_chart = models.ForeignKey(
-        "medias.ServiceDeliveryImage",
+    # research_chapterimage
+    research_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
         on_delete=models.SET_NULL,
-        # size=[2480, 2480],
         blank=True,
         null=True,
-        help_text="The 'Service Delivery Structure' page image (2480pt, 2480pt).",
+        related_name="research_chapter_image",
+    )
+
+    research_intro = models.TextField(
+        verbose_name="Research Activities Intro",
+        blank=True,
+        null=True,
+        help_text="Introduction paragraph for the Research Activity section in the ARAR",
+    )
+
+    # partnerships_chapterimage
+    partnerships_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="partnerships_chapter_image",
+    )
+
+    # collaborations_chapterimage
+    collaborations_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="collaborations_chapter_image",
+    )
+
+    # studentprojects_chapterimage
+    studentprojects_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="student_projects_chapter_image",
+    )
+
+    student_intro = models.TextField(
+        verbose_name="Student Projects Introduction",
+        blank=True,
+        null=True,
+        help_text="Introduction paragraph for the Student Projects section in the ARAR",
+    )
+
+    # publications_chapterimage
+    publications_chapter_image = models.ForeignKey(
+        "medias.AnnualReportImage",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="publications_chapter_image",
+    )
+
+    # pub
+    publications = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Publications and Reports",
+        help_text="Publications for the year",
+    )
+
+    date_open = models.DateField(
+        help_text="The date at which submissions are opened for this report",
+    )
+
+    date_closed = models.DateField(
+        help_text="The date at which submissions are closed for this report",
+    )
+
+    pdf = models.ForeignKey(
+        "medias.ReportPDF",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        editable=False,
+        help_text="The PDF file generated for the report.",
     )
 
     def __str__(self) -> str:
         return f"ARAR - {self.year}"
 
     class Meta:
-        verbose_name_plural = "ARAR Reports"
-
-    # research_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the Summary of Research projects."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #     )
-    # )
-
-    # research_intro = models.TextField(
-    #     verbose_name=_("Research Activities Introduction"),
-    #     blank=True, null=True,
-    #     help_text=_("Introduction paragraph for the Research Activity section "
-    #                 "in the ARAR"))
-
-    # partnerships_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the External Partnerships chapter."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #     )
-    # )
-
-    # collaboration_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the Collab with Academia summary."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #     )
-    # )
-
-    # studentprojects_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the Student Projects chapter."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #     )
-    # )
-
-    # student_intro = models.TextField(
-    #     verbose_name=_("Student Projects Introduction"),
-    #     blank=True, null=True,
-    #     help_text=_("Introduction paragraph for the Student Projects section "
-    #                 "in the ARAR"))
-
-    # publications_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the Publications chapter."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #     )
-    # )
-
-    # pub = models.TextField(
-    #     verbose_name=_("Publications and Reports"),
-    #     blank=True, null=True,
-    #     help_text=_("The Publications go here, Lisa!"))
-
-    # date_open = models.DateField(
-    #     verbose_name=_("Open for submissions"),
-    #     help_text=_("Date from which this ARAR report can be updated."))
-
-    # date_closed = models.DateField(
-    #     verbose_name=_("Closed for submissions"),
-    #     help_text=_("The cut-off date for any changes."))
-
-    # pdf = models.FileField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     editable=False,
-    #     help_text="The latest, greatest and PDFest version of all times")
-
-    # class Meta:
-    #     """Class opts."""
-
-    #     app_label = 'pythia'
-    #     get_latest_by = 'date_open'  # 'created'
-    #     verbose_name = 'Annual Report'
-    #     verbose_name_plural = 'Annual Reports'
-
-    # def __str__(self):
-    #     """The report name."""
-    #     return "Annual Report {0}-{1}".format(
-    #         self.year - 1, self.year)
+        verbose_name = "Annual Report"
+        verbose_name_plural = "Annual Reports"

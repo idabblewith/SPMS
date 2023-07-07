@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import ARARReport
-from .serializers import ARARReportSerializer
+from .models import AnnualReport
+from .serializers import AnnualReportSerializer
 
 from rest_framework.exceptions import (
     NotFound,
@@ -131,14 +131,14 @@ class Reports(APIView):
 
     def go(self, pk):
         try:
-            obj = ARARReport.objects.get(pk=pk)
-        except ARARReport.DoesNotExist:
+            obj = AnnualReport.objects.get(pk=pk)
+        except AnnualReport.DoesNotExist:
             raise NotFound
         return obj
 
     def get(self, req):
-        all_reports = ARARReport.objects.all()
-        ser = ARARReportSerializer(
+        all_reports = AnnualReport.objects.all()
+        ser = AnnualReportSerializer(
             all_reports,
             many=True,
             context={"request": req},
@@ -149,7 +149,7 @@ class Reports(APIView):
         )
 
     # def post(self, req):
-    #     ser = ARARReportSerializer(
+    #     ser = AnnualReportSerializer(
     #         data=req.data,
     #     )
     #     if ser.is_valid(

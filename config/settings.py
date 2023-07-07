@@ -152,6 +152,7 @@ CUSTOM_APPS = [
     "projects.apps.ProjectsConfig",
     "reports.apps.ReportsConfig",
     "communications.apps.CommunicationsConfig",
+    "documents.apps.DocumentsConfig",
 ]
 
 
