@@ -429,18 +429,6 @@ class StudentReportDetail(models.Model):
 
     # ===================
 
-    year = models.PositiveIntegerField(
-        editable=False,
-        default=dt.today().year,
-        help_text="The year on which this progress report reports on with four digits, e.g. 2014 for FY 2013/14.",
-    )
-
-    progress_report = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Report progress made this year in max. 150 words.",
-    )
-
     report = models.ForeignKey(
         "reports.AnnualReport",
         on_delete=models.SET_NULL,
@@ -449,8 +437,20 @@ class StudentReportDetail(models.Model):
         help_text="The annual report publishing this StudentReport",
     )
 
+    progress_report = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Report progress made this year in max. 150 words.",
+    )
+
+    year = models.PositiveIntegerField(
+        editable=False,
+        default=dt.today().year,
+        help_text="The year on which this progress report reports on with four digits, e.g. 2014 for FY 2013/14.",
+    )
+
     def __str__(self) -> str:
-        return f"STUDENT REPORT - {self.project}"
+        return f"STUDENT REPORT - {self.year}"
 
     class Meta:
         verbose_name = "Student Report"
