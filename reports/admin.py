@@ -8,5 +8,5 @@ from .models import AnnualReport
 class AnnualReportAdmin(admin.ModelAdmin):
     list_display = (
         "year",
-        "pdf",
+        # "pdf",
     )

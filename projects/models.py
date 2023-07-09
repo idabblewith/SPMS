@@ -434,7 +434,7 @@ class ExternalProjectDetails(models.Model):
         verbose_name_plural = "External Projects"
 
     def __str__(self) -> str:
-        return f"{self.organisation} | {self.collaboration_with} "
+        return f"{self.project} | {self.collaboration_with} "
 
 
 # CREATE SEPARATE TABLE FOR STUDENT AND STAFF LISTS

@@ -84,6 +84,8 @@ class ProjectDocument(CommonModel):
         INAPPROVAL = "inapproval", "Approval Requested"
         APPROVED = "approved", "Approved"
 
+    old_id = models.IntegerField()
+
     status = models.CharField(
         max_length=50,
         choices=StatusChoices.choices,
@@ -120,11 +122,11 @@ class ProjectDocument(CommonModel):
     )
 
     # ========= TODO: Change to foreign key linking to medias_pdf
-    pdf = models.CharField(
-        max_length=400,
-        null=True,
-        blank=True,
-    )
+    # pdf = models.CharField(
+    #     max_length=400,
+    #     null=True,
+    #     blank=True,
+    # )
 
     def __str__(self) -> str:
         return f"{self.kind} - {self.project} | {self.created_at}"
