@@ -5,7 +5,7 @@ from datetime import datetime as dt
 from django.core.serializers.json import DjangoJSONEncoder
 
 
-class Endorsement(CommonModel):
+class Endorsement(models.Model):
     """
     Model Definition for endorsements. Split from Project Plan.
     """
@@ -51,10 +51,23 @@ class Endorsement(CommonModel):
         blank=True,
         null=True,
         max_length=100,
+        default=EndorsementChoices.NOTREQUIRED,
         choices=EndorsementChoices.choices,
         help_text="The Data Manager's endorsement of the project's data management. \
             The DM will help to set up Wiki pages, data catalogue permissions, \
             scientific sites, and advise on metadata creation.",
+    )
+
+    data_management = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Describe how and where data will be maintained, archived, cataloged. Read DBCA guideline 16.",
+    )
+
+    no_specimens = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Estimate the number of collected vouchered specimens. Provide any additional info required for the Harbarium Curator's endorsement.",
     )
 
     def __str__(self) -> str:
@@ -220,13 +233,6 @@ class ProjectPlanDetail(models.Model):
 
     # ---
 
-    # TODO: Change from text field to OneToMany to directly refer to the projects
-    related_projects = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Name related SPPs and the extent you have consulted with their project leaders",
-    )
-
     background = models.TextField(
         blank=True,
         null=True,
@@ -257,13 +263,15 @@ class ProjectPlanDetail(models.Model):
         help_text="Major tasks, milestones and outputs. Indicate delivery time frame for each task.",
     )
 
-    references = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Paste in the bibliography of your literature research",
+    listed_references = (
+        models.TextField(  # changed from references as it is a reserved word
+            blank=True,
+            null=True,
+            help_text="Paste in the bibliography of your literature research",
+        )
     )
 
-    methadology = models.TextField(
+    methodology = models.TextField(
         blank=True,
         null=True,
         help_text="Describe the study design and statistical analysis.",
@@ -282,21 +290,6 @@ class ProjectPlanDetail(models.Model):
         default=False,
         help_text="Tick to indicate that this project will involve direct interaction with animals, which will require endorsement by the Animal Ethics Committee.",
     )
-
-    # Endorsements related.
-
-    data_management = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Describe how and where data will be maintained, archived, cataloged. Read DBCA guideline 16.",
-    )
-
-    no_specimens = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Estimate the number of collected vouchered specimens. Provide any additional info required for the Harbarium Curator's endorsement.",
-    )
-
     # Budget
 
     operating_budget = models.TextField(
@@ -335,6 +328,13 @@ class ProjectPlanDetail(models.Model):
             ],
             cls=DjangoJSONEncoder,
         ),
+    )
+
+    # TODO: Change from text field to OneToMany to directly refer to the projects
+    related_projects = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Name related SPPs and the extent you have consulted with their project leaders",
     )
 
     def __str__(self) -> str:
