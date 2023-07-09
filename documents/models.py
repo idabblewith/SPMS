@@ -359,6 +359,14 @@ class ProgressReportDetail(models.Model):
 
     # ======
 
+    report = models.ForeignKey(
+        "reports.AnnualReport",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        help_text="The annual report publishing this Report",
+    )
+
     year = models.PositiveIntegerField(
         editable=False,
         default=dt.today().year,
@@ -368,14 +376,6 @@ class ProgressReportDetail(models.Model):
     is_final_report = models.BooleanField(
         default=False,
         help_text="Whether this report is the final progress report after submitting a project closure request.",
-    )
-
-    report = models.ForeignKey(
-        "reports.AnnualReport",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        help_text="The annual report publishing this Report",
     )
 
     context = models.TextField(
@@ -414,6 +414,47 @@ class ProgressReportDetail(models.Model):
     class Meta:
         verbose_name = "Progress Report"
         verbose_name_plural = "Progress Reports"
+
+
+class StudentReportDetail(models.Model):
+    """
+    Model Definition for Progress Reports of Student Projects
+    """
+
+    document = models.ForeignKey(
+        "documents.ProjectDocument",
+        on_delete=models.CASCADE,
+        related_name="student_report_details",
+    )
+
+    # ===================
+
+    year = models.PositiveIntegerField(
+        editable=False,
+        default=dt.today().year,
+        help_text="The year on which this progress report reports on with four digits, e.g. 2014 for FY 2013/14.",
+    )
+
+    progress_report = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Report progress made this year in max. 150 words.",
+    )
+
+    report = models.ForeignKey(
+        "reports.AnnualReport",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        help_text="The annual report publishing this StudentReport",
+    )
+
+    def __str__(self) -> str:
+        return f"STUDENT REPORT - {self.project}"
+
+    class Meta:
+        verbose_name = "Student Report"
+        verbose_name_plural = "Student Reports"
 
 
 class ProjectClosureDetail(models.Model):
@@ -489,44 +530,3 @@ class ProjectClosureDetail(models.Model):
     class Meta:
         verbose_name = "Project Closure"
         verbose_name_plural = "Project Closures"
-
-
-class StudentReportDetail(models.Model):
-    """
-    Model Definition for Progress Reports of Student Projects
-    """
-
-    document = models.ForeignKey(
-        "documents.ProjectDocument",
-        on_delete=models.CASCADE,
-        related_name="student_report_details",
-    )
-
-    # ===================
-
-    year = models.PositiveIntegerField(
-        editable=False,
-        default=dt.today().year,
-        help_text="The year on which this progress report reports on with four digits, e.g. 2014 for FY 2013/14.",
-    )
-
-    progress_report = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Report progress made this year in max. 150 words.",
-    )
-
-    report = models.ForeignKey(
-        "reports.AnnualReport",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        help_text="The annual report publishing this StudentReport",
-    )
-
-    def __str__(self) -> str:
-        return f"STUDENT REPORT - {self.project}"
-
-    class Meta:
-        verbose_name = "Student Report"
-        verbose_name_plural = "Student Reports"
