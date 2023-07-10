@@ -23,27 +23,27 @@ class ChatRoom(CommonModel):
         verbose_name_plural = "Chat Rooms"
 
 
-class Comment(CommonModel):
+class ProjectDocumentComment(CommonModel):
+    old_id = models.IntegerField()
     user = models.ForeignKey(
         "users.User",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,  # OR DELETE - CLARIFY
     )
-    category = models.ForeignKey(
-        "categories.ProjectCategory",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    project = models.ForeignKey(
-        "projects.Project",
-        blank=True,
-        null=True,
+    # project = models.ForeignKey(
+    #     "projects.Project",
+    #     blank=True,
+    #     null=True,
+    #     on_delete=models.CASCADE,
+    #     related_name="comments",
+    # )
+    document = models.ForeignKey(
+        "documents.ProjectDocument",
         on_delete=models.CASCADE,
         related_name="comments",
     )
-    text = models.CharField(max_length=500)
+    text = models.CharField(max_length=1500)
     ip_address = models.CharField(
         max_length=45,
         null=True,
@@ -153,9 +153,9 @@ class CommentReaction(CommonModel):
         related_name="comment_reactions",
     )
     comment = models.ForeignKey(
-        "communications.Comment",
+        "communications.ProjectDocumentComment",
         on_delete=models.CASCADE,
-        related_name="comment_reactions",
+        related_name="reactions",
     )
     reaction = models.CharField(
         max_length=30,

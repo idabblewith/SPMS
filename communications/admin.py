@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Comment,
+    ProjectDocumentComment,
     DirectMessage,
     DirectMessageReaction,
     CommentReaction,
@@ -26,20 +26,21 @@ class ChatRoomAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Comment)
+@admin.register(ProjectDocumentComment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = [
         "user",
-        "category",
-        "project",
+        # "category",
+        "document",
         "text",
         "created_at",
         "is_public",
+        "is_removed",
     ]
 
     list_filter = [
         "is_public",
-        "category",
+        "is_removed",
     ]
 
     search_fields = [
@@ -55,9 +56,9 @@ class CommentReactionAdmin(admin.ModelAdmin):
         "comment",
     ]
 
-    list_filter = [
-        "comment__category",
-    ]
+    # list_filter = [
+    #     "comment__category",
+    # ]
 
     search_fields = [
         "comment__text",

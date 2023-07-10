@@ -1,6 +1,6 @@
 from .models import (
     ChatRoom,
-    Comment,
+    ProjectDocumentComment,
     CommentReaction,
     DirectMessage,
     DirectMessageReaction,
@@ -37,7 +37,7 @@ class TinyCommentSerializer(ModelSerializer):
     user = TinyUserSerializer(read_only=True)
 
     class Meta:
-        model = Comment
+        model = ProjectDocumentComment
         fields = [
             "user",
             "category",
@@ -50,7 +50,7 @@ class CommentSerializer(ModelSerializer):
     user = TinyUserSerializer(read_only=True)
 
     class Meta:
-        model = Comment
+        model = ProjectDocumentComment
         fields = "__all__"
 
 

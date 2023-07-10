@@ -22,7 +22,7 @@ from django.utils import timezone
 import time
 
 from .models import (
-    Comment,
+    ProjectDocumentComment,
     DirectMessage,
     ChatRoom,
     CommentReaction,
@@ -98,7 +98,7 @@ class DirectMessages(APIView):
 
 class Comments(APIView):
     def get(self, req):
-        all = Comment.objects.all()
+        all = ProjectDocumentComment.objects.all()
         ser = TinyCommentSerializer(
             all,
             many=True,
@@ -269,8 +269,8 @@ class DirectMessageDetail(APIView):
 class CommentDetail(APIView):
     def go(self, req, pk):
         try:
-            obj = Comment.objects.get(pk=pk)
-        except Comment.DoesNotExist:
+            obj = ProjectDocumentComment.objects.get(pk=pk)
+        except ProjectDocumentComment.DoesNotExist:
             raise NotFound
         return obj
 
