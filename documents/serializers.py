@@ -6,4 +6,5 @@ from .models import (
     ProjectClosureDetail,
     Endorsement,
     ProjectDocument,
+    Publication,
 )

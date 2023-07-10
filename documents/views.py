@@ -7,6 +7,7 @@ from .models import (
     ProjectClosureDetail,
     Endorsement,
     ProjectDocument,
+    Publication,
 )
 
 # Create your views here.

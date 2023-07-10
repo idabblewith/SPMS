@@ -530,3 +530,99 @@ class ProjectClosureDetail(models.Model):
     class Meta:
         verbose_name = "Project Closure"
         verbose_name_plural = "Project Closures"
+
+
+class Publication(CommonModel):
+    """
+    Model Definition for publications made by/for the department and external publications
+    """
+
+    def generate_apa_citation(self):
+        internal_authors = self.internal_authors.all()
+        external_authors = (
+            self.external_authors.strip() if self.external_authors else ""
+        )
+        all_authors = (
+            internal_authors + external_authors
+            if self.kind == "internal"
+            else external_authors + internal_authors
+        )
+
+        key_author = str(all_authors[0]) if all_authors else ""
+        authors = (
+            key_author
+            + ", "
+            + ", ".join(str(author) for author in all_authors if author != key_author)
+        )
+
+        citation_parts = [authors]
+
+        if self.doi:
+            citation_parts.append(f"({self.doi})")
+
+        citation_parts.append(f"{self.title}.")
+
+        if self.doc_link:
+            citation_parts.append(f"{self.doc_link}.")
+
+        if self.page_range:
+            citation_parts.append(f"pp. {self.page_range}.")
+
+        if self.volume:
+            citation_parts.append(f"{self.volume}.")
+
+        citation = " ".join(citation_parts)
+
+        self.apa_citation = citation
+
+    class PublicationChoices(models.TextChoices):
+        INTERNAL = "internal", "Internal"
+        EXTERNAL = "external", "External"
+
+    title = models.CharField(
+        max_length=500,
+    )
+    kind = models.CharField(
+        max_length=100,
+        choices=PublicationChoices.choices,
+    )
+    internal_authors = models.ManyToManyField(
+        "user.User", blank=True, null=True, related_name="publications"
+    )
+    external_authors = models.CharField(
+        max_length=1000,
+        blank=True,
+        null=True,
+    )
+    doc_link = models.CharField(
+        max_length=1500,
+        blank=True,
+        null=True,
+    )
+    page_range = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    doi = models.CharField(
+        max_length=1000,
+        blank=True,
+        null=True,
+    )
+    volume = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    apa_citation = models.CharField(
+        max_length=1500,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self) -> str:
+        return f"Publication {self.kind} |{self.name}"
+
+    class Meta:
+        verbose_name = "Publication"
+        verbose_name_plural = "Publications"
